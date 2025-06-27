@@ -1,0 +1,25 @@
+[project]
+name = "blasmodcli"
+version = "0.1.0"
+authors = [ { name = "salamint", email = "salamint@proton.me" } ]
+description = "A tool to simplify the installation and management of mods for Blasphemous and Blasphemous II on Linux."
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: Linux",
+]
+license = "MIT"
+license-files = [ "LICENSE" ]
+dependencies = [ "requests >= 2.32" ]
+
+[project.urls]
+Homepage = "https://gitlab.com/salamint/blasmodcli"
+Issues = "https://gitlab.com/salamint/blasmodcli/-/issues"
+
+[build-system]
+requires = [ "setuptools" ]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = [ "src" ]
