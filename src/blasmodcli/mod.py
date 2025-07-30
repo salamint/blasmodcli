@@ -6,7 +6,7 @@ from urllib.request import urlretrieve
 from requests import get as request, HTTPError
 
 from blasmodcli.exceptions import DoneException, CancelException
-from blasmodcli.utils import Color, Message, Table, Counter
+from blasmodcli.utils import Color, Message, Table, Counter, Directories
 from blasmodcli.version import Version
 import blasmodcli.games.game
 
@@ -140,6 +140,7 @@ class Mod:
         return 0
 
     def install(self, activate_after: bool = True, force: bool = False) -> int:
+        Directories.require(self.game.mods_directory)
         p = Message.progress("Resolving dependencies")
         dependencies = self.resolve_dependencies(max_state=ModState.NONE)
         if force and self not in dependencies:
@@ -190,13 +191,16 @@ class Mod:
         return self.get_installed_version() is not None
 
     def get_installed_archive(self) -> Path | None:
-        for archive in self.game.mods_directory.iterdir():
-            components = archive.stem.split("-")
-            if len(components) == 1:
-                continue
-            if "-".join(components[:-1]) == self.name:
-                return archive
-        return None
+        try:
+            for archive in self.game.mods_directory.iterdir():
+                components = archive.stem.split("-")
+                if len(components) == 1:
+                    continue
+                if "-".join(components[:-1]) == self.name:
+                    return archive
+            return None
+        except FileNotFoundError:
+            return None
 
     def get_installed_version(self) -> 'Version | None':
         archive = self.get_installed_archive()
