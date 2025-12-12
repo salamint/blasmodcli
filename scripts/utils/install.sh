@@ -14,7 +14,7 @@ mkdir -p "$PROGRAM_DIR"
 python -m venv "$VENV_DIR"
 
 echo "=> Installing the python package locally..."
-source "$VENV_DIR/bin/activate"
+. "$VENV_DIR/bin/activate"
 pip install "$TEMP_LOCATION"
 
 echo "=> Cleaning up installation..."
@@ -23,4 +23,4 @@ rm -rf "$TEMP_LOCATION"
 
 echo "=> blasmodcli interface successfully installed!"
 echo "TIP: The scripts can be found in the $SCRIPTS_DIR directory."
-echo "TIP: Consider creating a shortcut in your /usr/bin directory or any directory in your $$PATH variable, or add the scripts directory ot the $$PATH."
+echo "TIP: Consider creating a shortcut in your /usr/bin directory or any directory in your $$PATH variable, or add the scripts directory to the $$PATH."
