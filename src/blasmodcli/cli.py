@@ -68,7 +68,7 @@ class CommandLineInterface:
         )
 
     def add_backup_handler(self):
-        backup_cmd = self.add_handler(self.handle_backup, "Backups your saves into an archive and exports them.")
+        backup_cmd = self.add_handler(self.handle_backup, "Backs up your saves into an archive and exports them.")
         backup_cmd.add_argument("--destination", "-d", default=Path.cwd(), type=Path, help="")
 
     def add_clear_handler(self):

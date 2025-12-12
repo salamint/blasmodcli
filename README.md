@@ -41,6 +41,8 @@ List of features that needs to be implemented.
 - [ ] Add a handler to upgrade one or every installed mods to their latest version.
 - [ ] Deactivate the mods that depend on a mod that has been deactivated/uninstalled.
 - [ ] Add the option to deactivate mods recursively (deactivate a mod and its dependencies).
+- [ ] Adding mod packs to easily swap mods
+- [ ] Have mods profiles to easily switch mod configurations
 
 ## Usage
 
@@ -53,4 +55,80 @@ blasmodcli <action> --help
 blas2modcli --help
 blas2modcli <action> [args]
 blas2modcli <action> --help
+```
+
+## Commands
+
+| Command      | Implemented | Level    | Parameters                                                               | Description |
+| ------------ | ----------- | -------- | ------------------------------------------------------------------------ | ----------- |
+| `info`       | ✅/✅       | Internal | `mod_name`                                                               | Displays information about a mod using its name. |
+| `list`       | ✅/✅       | Internal | `[--installed] [--activated]`                                            | Shows the list of every mod available (or installed, or activated). |
+| `search`     | ✅/✅       | Internal | `[terms ...]`                                                            | Lists every mod whose name, author or description contains the given string of text. |
+| `update`     | ✅/✅       | Internal |                                                                          | Updates the mod database and fetches the latest mod version, allowing to detect upgradable mods. |
+| `backup`     | ✅/✅       | Game     | `[--destination DESTINATION]`                                            | Backs up your saves into an archive and exports them. |
+| `clear`      | ✅/✅       | Game     | `[--force]`                                                              | Deletes the 'Modding' directory that contains all activated mod. In other words, deactivate all mods in a cleaner way. |
+| `configure`  | ✅/❌       | Game     |                                                                          | Downloads and extract the modding tools for Blasphemous inside the game's folder. |
+| `activate`   | ✅/✅       | Mod      | `[--reactivate REACTIVATE] [--not-recursive] mod_name`                   | Extracts the contents of the mod inside the Modding folder, thus activating it. |
+| `deactivate` | ✅/✅       | Mod      | `[--not-recursive] mod_name`                                             | Removes the dynamic library file associated with the mod inside the Modding folder, thus deactivating it. |
+| `install`    | ✅/✅       | Mod      | `[--force] [--do-not-activate] mod_name`                                 | Downloads a mod and does not activate it immediately. |
+| `uninstall`  | ✅/✅       | Mod      | `[--unused-dependencies-action {nothing,deactivate,uninstall}] mod_name` | Deletes the mod and all of its files from the game's folder. |
+| `upgrade`    | ❌/❌       | Mod      |                                                                          | Upgrades all mods (or the given one) to their latest version. |
+
+### Details
+
+The **Implemented** column shows whether the command is implemented for
+Blasphemous 1 or Blasphemous 2 respectively. If the command is not implemented,
+it will have no effect.
+
+The **Level** column indicates at which level does the command operate. The
+**Internal** level means the command only reads and/or writes files that are
+managed by the tool itself (cache files, mod database etc.). The **Game** level
+means the command has to or can interact with the game's files, to install the
+modding tools for example. The **Mod** level means the command only affects mod
+files.
+
+The **Parameter** column only shows the list of parameters with their names. If
+the parameter is enclosed between brackets like thise: `[--parameter]`, it means
+it is optional. If it is not however, it means it is required by the command. To
+know more the usage of each parameter, please consult the help for the
+corresponding command.
+
+The **Description** column offers a short description of what the command does,
+taken from the `--help` message.
+
+## Examples
+
+Here are some common usages of this tool used as examples of what you could be
+using this tool for.
+
+### First configuration
+
+The first time you use this tool, you might want to configure a game to run
+mods. This can be done simply by running:
+```sh
+blasmodcli configure
+```
+
+### Looking for mods
+```sh
+# Note: Since blasmodcli and blas2modcli are each tied to their own game,
+# you might want to update both. That cannot be done with the same command.
+# You will have to type and run `blas2modcli update` separately.
+blasmodcli update
+blasmodcli list
+blasmodcli search quality of life
+```
+
+### Installing mods
+```sh
+blasmodcli install "Better Saves"
+blasmodcli install "Damage Numbers Reborn"
+```
+
+### Managing mods
+```sh
+# These aren't very realistic examples
+blasmodcli deactivate "Damage Numbers Reborn"
+blasmodcli uninstall "Better Saves"
+blasmodcli activate "Damage Numbers Reborn"
 ```
