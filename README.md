@@ -36,19 +36,21 @@ For a mod:
 
 ### TODO list
 List of features that needs to be implemented.
-- Add the option to configure the modding tools for Blasphemous II.
-- Add a handler to uninstall mods.
-- Add a handler to upgrade one or every installed to their latest version.
-- Deactivate the mods that depend on a mod that has been deactivated/uninstalled.
-- Add the option to deactivate mods recursively (deactivate a mod and its dependencies).
+- [ ] Add the option to configure the modding tools for Blasphemous II.
+- [ ] Add a handler to uninstall mods.
+- [ ] Add a handler to upgrade one or every installed mods to their latest version.
+- [ ] Deactivate the mods that depend on a mod that has been deactivated/uninstalled.
+- [ ] Add the option to deactivate mods recursively (deactivate a mod and its dependencies).
 
 ## Usage
 
 ```shell
 # For Blasphemous (the first game)
+blasmodcli --help
 blasmodcli <action> [args]
 blasmodcli <action> --help
 # For Blasphemous II (the sequel)
+blas2modcli --help
 blas2modcli <action> [args]
 blas2modcli <action> --help
 ```

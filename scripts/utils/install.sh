@@ -23,4 +23,4 @@ rm -rf "$TEMP_LOCATION"
 
 echo "=> blasmodcli interface successfully installed!"
 echo "TIP: The scripts can be found in the $SCRIPTS_DIR directory."
-echo "TIP: Consider creating a shortcut in your /usr/bin directory or any directory in your $$PATH variable, or add the scripts directory to the $$PATH."
+echo "TIP: Consider creating a shortcut in your /usr/bin directory or any directory in your \$PATH variable, or add the scripts directory to the \$PATH."
