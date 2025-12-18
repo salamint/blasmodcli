@@ -1,3 +1,9 @@
 #!/usr/bin/env sh
-. "$HOME/.local/share/blasmodcli/venv/bin/activate"
+
+if [ "$PYTHON_VIRTUALENV_PATH" = "" ]
+then
+    PYTHON_VIRTUALENV_PATH="$HOME/.local/share/blasmodcli/venv"
+fi
+
+. "$PYTHON_VIRTUALENV_PATH/bin/activate"
 python3 -m blasmodcli "Blasphemous" -- "$@"
