@@ -241,10 +241,8 @@ class Mod:
         return ModState.NONE
 
     def print(self, local: bool):
-        if local:
-            version = self.get_installed_version()
-        else:
-            version = self.version
+        version = self.get_installed_version() if local else self.version
+        version = version if version is not None else "unknown"
 
         name = Color.fmt(self.name, Color.WHITE)
         version = Color.fmt(version, Color.YELLOW)
