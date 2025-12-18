@@ -59,20 +59,20 @@ blas2modcli <action> --help
 
 ## Commands
 
-| Command      | Implemented | Level    | Parameters                                                               | Description |
-| ------------ | ----------- | -------- | ------------------------------------------------------------------------ | ----------- |
-| `info`       | ✅/✅       | Internal | `mod_name`                                                               | Displays information about a mod using its name. |
-| `list`       | ✅/✅       | Internal | `[--installed] [--activated]`                                            | Shows the list of every mod available (or installed, or activated). |
-| `search`     | ✅/✅       | Internal | `[terms ...]`                                                            | Lists every mod whose name, author or description contains the given string of text. |
-| `update`     | ✅/✅       | Internal |                                                                          | Updates the mod database and fetches the latest mod version, allowing to detect upgradable mods. |
-| `backup`     | ✅/✅       | Game     | `[--destination DESTINATION]`                                            | Backs up your saves into an archive and exports them. |
-| `clear`      | ✅/✅       | Game     | `[--force]`                                                              | Deletes the 'Modding' directory that contains all activated mod. In other words, deactivate all mods in a cleaner way. |
-| `configure`  | ✅/❌       | Game     |                                                                          | Downloads and extract the modding tools for Blasphemous inside the game's folder. |
-| `activate`   | ✅/✅       | Mod      | `[--reactivate REACTIVATE] [--not-recursive] mod_name`                   | Extracts the contents of the mod inside the Modding folder, thus activating it. |
-| `deactivate` | ✅/✅       | Mod      | `[--not-recursive] mod_name`                                             | Removes the dynamic library file associated with the mod inside the Modding folder, thus deactivating it. |
-| `install`    | ✅/✅       | Mod      | `[--force] [--do-not-activate] mod_name`                                 | Downloads a mod and does not activate it immediately. |
-| `uninstall`  | ✅/✅       | Mod      | `[--unused-dependencies-action {nothing,deactivate,uninstall}] mod_name` | Deletes the mod and all of its files from the game's folder. |
-| `upgrade`    | ❌/❌       | Mod      |                                                                          | Upgrades all mods (or the given one) to their latest version. |
+| Command      | Implemented | Level    | Parameters                                                               | Description                                                                                                            |
+|--------------|-------------|----------|--------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| `info`       | ✅/✅         | Internal | `mod_name`                                                               | Displays information about a mod using its name.                                                                       |
+| `list`       | ✅/✅         | Internal | `[--installed] [--activated]`                                            | Shows the list of every mod available (or installed, or activated).                                                    |
+| `search`     | ✅/✅         | Internal | `[terms ...]`                                                            | Lists every mod whose name, author or description contains the given string of text.                                   |
+| `update`     | ✅/✅         | Internal |                                                                          | Updates the mod database and fetches the latest mod version, allowing to detect upgradable mods.                       |
+| `backup`     | ✅/✅         | Game     | `[--destination DESTINATION]`                                            | Backs up your saves into an archive and exports them.                                                                  |
+| `clear`      | ✅/✅         | Game     | `[--force]`                                                              | Deletes the 'Modding' directory that contains all activated mod. In other words, deactivate all mods in a cleaner way. |
+| `configure`  | ✅/❌         | Game     |                                                                          | Downloads and extract the modding tools for Blasphemous inside the game's folder.                                      |
+| `activate`   | ✅/✅         | Mod      | `[--reactivate REACTIVATE] [--not-recursive] mod_name`                   | Extracts the contents of the mod inside the Modding folder, thus activating it.                                        |
+| `deactivate` | ✅/✅         | Mod      | `[--not-recursive] mod_name`                                             | Removes the dynamic library file associated with the mod inside the Modding folder, thus deactivating it.              |
+| `install`    | ✅/✅         | Mod      | `[--force] [--do-not-activate] mod_name`                                 | Downloads a mod and does not activate it immediately.                                                                  |
+| `uninstall`  | ❌/❌         | Mod      | `[--unused-dependencies-action {nothing,deactivate,uninstall}] mod_name` | Deletes the mod and all of its files from the game's folder.                                                           |
+| `upgrade`    | ❌/❌         | Mod      |                                                                          | Upgrades all mods (or the given one) to their latest version.                                                          |
 
 ### Details
 
