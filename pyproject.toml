@@ -13,6 +13,9 @@ license = "MIT"
 license-files = [ "LICENSE" ]
 dependencies = [ "requests >= 2.32" ]
 
+[project.optional-dependencies]
+testing = [ "pytest >= 9.0.2" ]
+
 [project.urls]
 Homepage = "https://gitlab.com/salamint/blasmodcli"
 Issues = "https://gitlab.com/salamint/blasmodcli/-/issues"
@@ -20,6 +23,10 @@ Issues = "https://gitlab.com/salamint/blasmodcli/-/issues"
 [build-system]
 requires = [ "setuptools" ]
 build-backend = "setuptools.build_meta"
+
+[tool.pytest]
+minversion = "9.0"
+testpaths = [ "tests" ]
 
 [tool.setuptools.packages.find]
 where = [ "src" ]
