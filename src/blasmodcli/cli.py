@@ -6,7 +6,7 @@ from typing import Callable, Dict, Sequence, Union
 from blasmodcli.exceptions import CancelException, DoneException
 from blasmodcli.games import Game
 from blasmodcli.mod import ModState
-from blasmodcli.utils import Directories, Message
+from blasmodcli.utils import Message
 
 
 Handler = Union[Callable[[], int], Callable[[...], int]]
@@ -24,7 +24,6 @@ class CommandLineInterface:
         self.game = game
         self.argument_parser = ArgumentParser(self.game.tool_name)
         self.subparsers = self.argument_parser.add_subparsers(dest="handler")
-        self.directories = Directories(self.game.tool_name)
         self.handlers: 'Dict[str, Handler]' = {}
 
     def add_handler(self, handler: 'Handler', help_: str) -> ArgumentParser:
