@@ -6,7 +6,7 @@ from blasmodcli.games.game import Game
 class BlasphemousII(Game):
 
     def __init__(self):
-        wine_emulated_root = Directories.STEAM_APPS / "compatdata" / "2114740" / "pfx" / "drive_c"
+        wine_emulated_root = Directories.get_steam_apps() / "compatdata" / "2114740" / "pfx" / "drive_c"
         super().__init__(
             "Blasphemous 2",
             "blas2modcli",
