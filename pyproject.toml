@@ -11,7 +11,10 @@ classifiers = [
 ]
 license = "MIT"
 license-files = [ "LICENSE" ]
-dependencies = [ "requests >= 2.32" ]
+dependencies = [
+    "requests >= 2.32",
+    "SQLAlchemy >= 2.0"
+]
 
 [project.urls]
 Homepage = "https://gitlab.com/salamint/blasmodcli"
