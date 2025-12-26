@@ -5,7 +5,7 @@ from requests import HTTPError
 from blasmodcli.exceptions import CancelException, DoneException
 from blasmodcli.games.game import Game
 from blasmodcli.utils import Color, Directories, Message, MODDING_INSTALLER_REPOSITORY
-from blasmodcli.version import Version
+from blasmodcli.model.version import Version
 
 
 class Blasphemous(Game):

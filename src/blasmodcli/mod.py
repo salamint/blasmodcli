@@ -7,7 +7,7 @@ from requests import get as request, HTTPError
 
 from blasmodcli.exceptions import DoneException, CancelException
 from blasmodcli.utils import Color, Message, Table, Counter, Directories
-from blasmodcli.version import Version
+from blasmodcli.model.version import Version
 import blasmodcli.games.game
 
 
