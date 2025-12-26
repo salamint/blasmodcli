@@ -8,7 +8,7 @@ import json
 from blasmodcli.exceptions import CancelException, DoneException
 from blasmodcli.games.modding_tools import ModdingTools
 from blasmodcli.utils import Directories, Message, Color, Counter
-from blasmodcli.version import Version
+from blasmodcli.model.version import Version
 import blasmodcli.mod
 
 MODDING_INSTALLER_REPO = "https://github.com/BrandenEK/Blasphemous.Modding.Installer"

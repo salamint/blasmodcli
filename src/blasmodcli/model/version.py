@@ -1,5 +1,20 @@
+from sqlalchemy import UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column
 
-class Version:
+from blasmodcli.model.base import Base
+
+
+class Version(Base):
+    __tablename__ = "version"
+    __table_args__ = (
+        UniqueConstraint("major", "minor", "patch", name="unique_version"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+
+    major: Mapped[int]
+    minor: Mapped[int]
+    patch: Mapped[int]
 
     @classmethod
     def from_string(cls, string: str) -> 'Version':
@@ -10,12 +25,7 @@ class Version:
         for i, component in enumerate(components):
             if not component.isdigit():
                 raise ValueError(f"Invalid version number: component {i} is not a digit.")
-        return cls(*components)
-
-    def __init__(self, major: int, minor: int, patch: int):
-        self.major = major
-        self.minor = minor
-        self.patch = patch
+        return cls(major=components[0], minor=components[1], patch=components[2])
 
     def __ge__(self, other: 'Version') -> bool:
         return self > other or self == other
@@ -42,6 +52,3 @@ class Version:
 
     def __str__(self) -> str:
         return f"{self.major}.{self.minor}.{self.patch}"
-
-    def __copy__(self) -> 'Version':
-        return Version(self.major, self.minor, self.patch)
