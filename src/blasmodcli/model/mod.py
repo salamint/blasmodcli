@@ -5,6 +5,7 @@ from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy.orm import mapped_column
 
+from blasmodcli.model.authorship import Authorship
 from blasmodcli.model.base import Base
 from blasmodcli.model.dependency import Dependency
 from blasmodcli.model.game import Game
@@ -26,7 +27,6 @@ class Mod(Base):
     source: Mapped['ModSource'] = relationship("ModSource", back_populates="mods")
 
     name: Mapped[str] = mapped_column(primary_key=True)
-    author: Mapped[str]
     description: Mapped[str]
     release_date: Mapped[date]
     repository: Mapped[str]
@@ -38,3 +38,5 @@ class Mod(Base):
 
     dependencies: Mapped[List[Self]] = relationship(Dependency, back_populates="mod_name")
     required_by: Mapped[List[Self]] = relationship(Dependency, back_populates="dependency_name")
+
+    authors: Mapped[List['Authorship']] = relationship("Authorship", back_populates="mod")
