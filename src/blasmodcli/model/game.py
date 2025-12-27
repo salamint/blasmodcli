@@ -10,7 +10,7 @@ class Game(Base):
     __tablename__ = "game"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(unique=True)
+    name: Mapped[str] = mapped_column(unique=True)
     mod_loader: Mapped[str]
     modding_tools_url: Mapped[str]
     linux_native: Mapped[bool]

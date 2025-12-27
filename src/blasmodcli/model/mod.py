@@ -7,6 +7,8 @@ from sqlalchemy.orm import mapped_column
 
 from blasmodcli.model.base import Base
 from blasmodcli.model.dependency import Dependency
+from blasmodcli.model.game import Game
+from blasmodcli.model.mod_source import ModSource
 from blasmodcli.model.version import Version
 
 
@@ -17,7 +19,12 @@ class Mod(Base):
         UniqueConstraint("source", "plugin_file", name="unique_plugin_file_per_source"),
     )
 
-    source: Mapped[str] = mapped_column(primary_key=True)
+    game_name: Mapped[str] = mapped_column(ForeignKey("Game.name"), primary_key=True)
+    game: Mapped['Game'] = relationship("Game")
+
+    source_name: Mapped[str] = mapped_column(ForeignKey("ModSource.name"), primary_key=True)
+    source: Mapped['ModSource'] = relationship("ModSource", back_populates="mods")
+
     name: Mapped[str] = mapped_column(primary_key=True)
     author: Mapped[str]
     description: Mapped[str]
