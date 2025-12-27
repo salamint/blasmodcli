@@ -1,7 +1,7 @@
 from datetime import date
 from typing import List, Self
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy.orm import mapped_column
 
@@ -12,7 +12,12 @@ from blasmodcli.model.version import Version
 
 class Mod(Base):
     __tablename__ = "mod"
+    __table_args__ = (
+        UniqueConstraint("source", "repository", name="unique_repository_per_source"),
+        UniqueConstraint("source", "plugin_file", name="unique_plugin_file_per_source"),
+    )
 
+    source: Mapped[str] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(primary_key=True)
     author: Mapped[str]
     description: Mapped[str]
@@ -21,6 +26,8 @@ class Mod(Base):
 
     version_id: Mapped[int] = mapped_column(ForeignKey(Version.id))
     version: Mapped[Version] = relationship(Version)
+
+    plugin_file_name: Mapped[str]
 
     dependencies: Mapped[List[Self]] = relationship(Dependency, back_populates="mod_name")
     required_by: Mapped[List[Self]] = relationship(Dependency, back_populates="dependency_name")
