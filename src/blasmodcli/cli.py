@@ -3,11 +3,9 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Callable, Dict, Sequence, Union
 
-from blasmodcli.exceptions import CancelException, DoneException
 from blasmodcli.games import Game
 from blasmodcli.mod import ModState
-from blasmodcli.utils import Message
-
+from blasmodcli.utils.cli import MetaCommandHandler
 
 Handler = Union[Callable[[], int], Callable[[...], int]]
 
@@ -22,32 +20,13 @@ class CommandLineInterface:
 
     def __init__(self, game: 'Game'):
         self.game = game
-        self.argument_parser = ArgumentParser(self.game.tool_name)
-        self.subparsers = self.argument_parser.add_subparsers(dest="handler")
-        self.handlers: 'Dict[str, Handler]' = {}
+        self.parser = ArgumentParser(self.game.tool_name)
+        self.subparsers = self.parser.add_subparsers(dest="handler")
+        self.handlers: 'Dict[str, MetaCommandHandler]' = {}
 
-    def add_handler(self, handler: 'Handler', help_: str) -> ArgumentParser:
-        name = handler.__name__
-        if name.startswith("handle_"):
-            name = name.replace("handle_", "")
-        subparser = self.subparsers.add_parser(name, help=help_)
-        subparser.handler = handler
-        self.handlers[name] = handler
-        return subparser
-
-    def add_all_handlers(self):
-        self.add_activate_handler()
-        self.add_backup_handler()
-        self.add_clear_handler()
-        self.add_configure_handler()
-        self.add_deactivate_handler()
-        self.add_info_handler()
-        self.add_install_handler()
-        self.add_list_handler()
-        self.add_search_handler()
-        self.add_uninstall_handler()
-        self.add_update_handler()
-        self.add_upgrade_handler()
+    def add_handler(self, handler: 'MetaCommandHandler'):
+        handler.add_subparser_to(self.subparsers)
+        self.handlers[handler.command] = handler
 
     def add_activate_handler(self):
         activate_cmd = self.add_handler(
@@ -232,23 +211,8 @@ class CommandLineInterface:
         return 0
 
     def parse_args(self, args: Sequence[str] | None = None) -> int:
-        ns = self.argument_parser.parse_args(args)
-        if not ns.handler:
-            self.argument_parser.print_help()
-            return 0
-        args = ns.__dict__.copy()
-        handler = args.pop("handler")
-        return self.run_handler(handler, args)
-
-    def run_handler(self, name: str, args: dict) -> int:
-        try:
-            return self.handlers[name](**args)
-        except DoneException as e:
-            Message.success(str(e))
-            return 0
-        except CancelException as e:
-            Message.error(str(e))
-            return 0
-        except Exception as e:
-            Message.error(f"{e.__class__.__name__}: {e}")
-            return 1
+        ns = self.parser.parse_args(args)
+        if ns.handler:
+            return self.handlers[ns.handler].call_handler(ns)
+        self.parser.print_help()
+        return 0
