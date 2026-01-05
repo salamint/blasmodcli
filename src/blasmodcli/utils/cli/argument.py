@@ -4,17 +4,26 @@ from typing import Any
 
 class Argument:
 
-    def __init__(self, *names: str, action: str = None, default: Any = None, type: type = None, help: str = None):
-        self.action = action
+    def __init__(self, *names: str, action: str = None, default: Any = None, help: str = None, type: type = None):
         self.names = list(names)
+        self.action = action
         self.default = default
-        self.type = type
         self.help = help
+        self.type = type
 
     def add_annotation(self, name: str, type_: type):
         self.names.insert(0, "--" + name.replace("_", "-"))
         if self.type is None:
             self.type = type_
+
+    def copy(self):
+        return Argument(
+            *self.names,
+            action=self.action,
+            default=self.default,
+            type=self.type,
+            help=self.help
+        )
 
     def get_action(self) -> str | None:
         if self.action:
