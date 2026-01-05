@@ -1,9 +1,11 @@
+import sys
+import traceback
 from abc import ABCMeta, ABC, abstractmethod
 from argparse import Namespace
 from typing import Any
 
 from blasmodcli.exceptions import DoneException, CancelException
-from blasmodcli.utils import Message
+from blasmodcli.utils import Message, Color
 from blasmodcli.utils.cli.argument import Argument
 
 _command_groups: dict[str, 'MetaCommandHandler'] = {}
@@ -55,7 +57,6 @@ class MetaCommandHandler(ABCMeta):
             if isinstance(value, Argument):
                 cls.arguments[attr] = value
 
-        print(cls.__annotations__)
         for arg_name, arg_type in cls.__annotations__.items():
             arg = cls.arguments[arg_name]
             arg.add_annotation(arg_name, arg_type)
@@ -82,6 +83,7 @@ class MetaCommandHandler(ABCMeta):
             return 0
         except Exception as e:
             Message.error(f"{e.__class__.__name__}: {e}")
+            Message.print(Color.RED, traceback.format_exc(), stream=sys.stderr)
             return 1
 
 
