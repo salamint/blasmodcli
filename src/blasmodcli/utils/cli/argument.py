@@ -12,9 +12,13 @@ class Argument:
         self.type = type
 
     def add_annotation(self, name: str, type_: type):
-        self.names.insert(0, "--" + name.replace("_", "-"))
         if self.type is None:
             self.type = type_
+
+        if self.is_optional():
+            self.names.insert(0, "--" + name.replace("_", "-"))
+        elif len(self.names) == 0:
+            self.names.append(name)
 
     def copy(self):
         return Argument(
@@ -25,7 +29,7 @@ class Argument:
             help=self.help
         )
 
-    def get_action(self) -> str | None:
+    def get_action(self) -> str:
         if self.action:
             return self.action
 
@@ -34,7 +38,13 @@ class Argument:
                 return "store_true"
             else:
                 return "store_false"
-        return None
+        return "store"
+
+    def is_optional(self):
+        has_default = self.default is not None
+        action_is_not_store = self.get_action() != "store"
+        has_multiple_names = len(self.names) > 1
+        return has_default or action_is_not_store or has_multiple_names
 
     def add_argument_to(self, parser: ArgumentParser):
         parser.add_argument(
