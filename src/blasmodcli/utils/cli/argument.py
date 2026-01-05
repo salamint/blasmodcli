@@ -1,12 +1,20 @@
 from argparse import ArgumentParser
-from typing import Any
+from typing import Any, Sequence
 
 
 class Argument:
 
-    def __init__(self, *names: str, action: str = None, default: Any = None, help: str = None, type: type = None):
+    def __init__(
+            self,
+            *names: str,
+            action: str = None,
+            choices: Sequence[str] = None,
+            default: Any = None,
+            help: str = None,
+            type: type = None):
         self.names = list(names)
         self.action = action
+        self.choices = choices
         self.default = default
         self.help = help
         self.type = type
@@ -24,6 +32,7 @@ class Argument:
         return Argument(
             *self.names,
             action=self.action,
+            choices=self.choices,
             default=self.default,
             type=self.type,
             help=self.help
@@ -47,9 +56,18 @@ class Argument:
         return has_default or action_is_not_store or has_multiple_names
 
     def add_argument_to(self, parser: ArgumentParser):
-        parser.add_argument(
-            *self.names,
-            action=self.get_action(),
-            default=self.default,
-            help=self.help
-        )
+        if self.choices:
+            parser.add_argument(
+                *self.names,
+                action=self.get_action(),
+                choices=self.choices,
+                default=self.default,
+                help=self.help
+            )
+        else:
+            parser.add_argument(
+                *self.names,
+                action=self.get_action(),
+                default=self.default,
+                help=self.help
+            )
