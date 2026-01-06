@@ -1,2 +1,2 @@
-from .argument import Argument
+from .argument import Argument, Choices
 from .command import CommandHandler, MetaCommandHandler
