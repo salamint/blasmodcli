@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 from typing import Callable, Dict, Sequence, Union
 
 from blasmodcli.games import Game
-from blasmodcli.utils.cli import MetaCommandHandler
+from blasmodcli.utils.cli.command import MetaCommandHandler
 
 Handler = Union[Callable[[], int], Callable[[...], int]]
 
