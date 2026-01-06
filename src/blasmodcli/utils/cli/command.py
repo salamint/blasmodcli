@@ -6,6 +6,7 @@ from typing import Any
 
 from blasmodcli.exceptions import DoneException, CancelException
 from blasmodcli.utils import Message, Color
+from blasmodcli.utils.cli import Choices
 from blasmodcli.utils.cli.argument import Argument
 
 _command_groups: dict[str, 'MetaCommandHandler'] = {}
@@ -58,8 +59,13 @@ class MetaCommandHandler(ABCMeta):
                 cls.arguments[attr] = value
 
         for arg_name, arg_type in cls.__annotations__.items():
-            arg = cls.arguments[arg_name]
-            arg.add_annotation(arg_name, arg_type)
+            arg = cls.arguments.get(arg_name)
+            if arg is None:
+                choices = getattr(cls, arg_name)
+                if isinstance(choices, Choices):
+                    choices.destination = arg_name
+            else:
+                arg.add_annotation(arg_name, arg_type)
 
     @property
     def command(cls):
