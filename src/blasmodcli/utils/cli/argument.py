@@ -11,12 +11,14 @@ class Argument:
             choices: Sequence[str] = None,
             default: Any = None,
             help: str = None,
+            nargs: str = None,
             type: type = None):
         self.names = list(names)
         self.action = action
         self.choices = choices
         self.default = default
         self.help = help
+        self.nargs = nargs
         self.type = type
 
     def add_annotation(self, name: str, type_: type):
@@ -35,6 +37,7 @@ class Argument:
             choices=self.choices,
             default=self.default,
             type=self.type,
+            nargs=self.nargs,
             help=self.help
         )
 
@@ -62,12 +65,14 @@ class Argument:
                 action=self.get_action(),
                 choices=self.choices,
                 default=self.default,
-                help=self.help
+                help=self.help,
+                nargs=self.nargs
             )
         else:
             parser.add_argument(
                 *self.names,
                 action=self.get_action(),
                 default=self.default,
-                help=self.help
+                help=self.help,
+                nargs=self.nargs
             )
