@@ -20,8 +20,8 @@ class CommandLineInterface:
         self.handlers[handler.command] = handler
 
     def parse_args(self, args: Sequence[str] | None = None) -> int:
-        ns = self.parser.parse_args(args)
-        if ns.handler:
-            return self.handlers[ns.handler].call_handler(ns)
+        namespace = self.parser.parse_args(args)
+        if namespace.handler:
+            return self.handlers[namespace.handler].call_handler(self.game, namespace)
         self.parser.print_help()
         return 0
