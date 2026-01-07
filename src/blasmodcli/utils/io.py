@@ -1,4 +1,6 @@
+import sys
 from dataclasses import dataclass
+from typing import TextIO
 
 from blasmodcli.utils import Color
 from blasmodcli.model.version import Version
@@ -29,9 +31,9 @@ class Counter:
 class Message:
 
     @staticmethod
-    def print(color: 'Color', message: str, nl: bool = True):
+    def print(color: 'Color', message: str, nl: bool = True, stream: TextIO | None = None):
         arrow = Color.fmt("=>", color)
-        print(f"{arrow} {message}", end="\n" if nl else "", flush=True)
+        print(f"{arrow} {message}", end="\n" if nl else "", file=stream, flush=True)
 
     @staticmethod
     def ask(message: str, default: bool = False) -> bool:

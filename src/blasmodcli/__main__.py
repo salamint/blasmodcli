@@ -2,9 +2,9 @@
 from argparse import ArgumentParser
 import sys
 
-from blasmodcli.cli import CommandLineInterface
 from blasmodcli.games import Game
 from blasmodcli.utils import Message
+from blasmodcli.utils.cli import CommandLineInterface
 
 
 def main() -> int:
