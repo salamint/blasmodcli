@@ -1,0 +1,13 @@
+[blas1]
+name = "Blasphemous"
+mod_loader = "BepInEx"
+modding_tools_url = "https://github.com/BrandenEK/Blasphemous.ModdingTools"
+linux_native = true
+saves_directory = "~/.config/unity3d/TheGameKitchen/Blasphemous/Savegames"
+
+[blas2]
+name = "Blasphemous 2"
+mod_loader = "MelonLoader"
+modding_tools_url = "https://github.com/BrandenEK/BlasII.ModdingTools"
+linux_native = false
+saves_directory = "~/.local/share/Steam/steamapps/compatdata/2114740/pfx/drive_c/users/steamuser/AppData/LocalLow/The Game Kitchen/Blasphemous 2"
