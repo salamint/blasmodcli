@@ -2,9 +2,6 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from blasmodcli.model.base import Base
-from blasmodcli.model.game import Game
-from blasmodcli.model.mod import Mod
-from blasmodcli.model.mod_source import ModSource
 
 
 class Authorship(Base):
@@ -20,3 +17,8 @@ class Authorship(Base):
     mod: Mapped['Mod'] = relationship("Mod", back_populates="authors")
 
     name: Mapped[str] = mapped_column(primary_key=True)
+
+
+from blasmodcli.model.game import Game
+from blasmodcli.model.mod import Mod
+from blasmodcli.model.mod_source import ModSource

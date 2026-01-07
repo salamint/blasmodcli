@@ -3,7 +3,6 @@ from typing import List
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from blasmodcli.model.base import Base
-from blasmodcli.model.mod_source import ModSource
 
 
 class Game(Base):
@@ -17,3 +16,6 @@ class Game(Base):
     saves_directory: Mapped[str]
 
     sources: Mapped[List['ModSource']] = relationship("ModSource", back_populates="game")
+
+
+from blasmodcli.model.mod_source import ModSource
