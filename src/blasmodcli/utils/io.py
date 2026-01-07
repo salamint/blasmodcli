@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from blasmodcli.utils import Color
-from blasmodcli.version import Version
+from blasmodcli.model.version import Version
 
 
 class Counter:

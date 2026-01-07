@@ -1,4 +1,4 @@
-from blasmodcli.version import Version
+from blasmodcli.model.version import Version
 import blasmodcli.games.game
 
 from requests import get as request, HTTPError
