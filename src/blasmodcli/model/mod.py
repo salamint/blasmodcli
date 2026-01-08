@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy.orm import mapped_column
 
 from blasmodcli.model.base import Base
-
+from blasmodcli.model.version import Version, VersionType
 
 AUTHORS_SEPARATOR = " && "
 
@@ -44,10 +44,7 @@ class Mod(Base):
     description: Mapped[str]
     release_date: Mapped[date]
     repository: Mapped[str]
-
-    version_id: Mapped[int] = mapped_column(ForeignKey("version.id"))
-    version: Mapped['Version'] = relationship("Version")
-
+    version: Mapped['Version'] = mapped_column(VersionType)
     plugin_file_name: Mapped[str]
 
     dependencies: Mapped[List['Dependency']] = relationship(
@@ -96,4 +93,3 @@ from blasmodcli.model.authorship import Authorship
 from blasmodcli.model.dependency import Dependency
 from blasmodcli.model.game import Game
 from blasmodcli.model.mod_source import ModSource
-from blasmodcli.model.version import Version

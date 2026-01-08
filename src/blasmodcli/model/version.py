@@ -1,20 +1,9 @@
-from sqlalchemy import UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from typing import Optional
 
-from blasmodcli.model.base import Base
+from sqlalchemy import TypeDecorator, String, Dialect
 
 
-class Version(Base):
-    __tablename__ = "version"
-    __table_args__ = (
-        UniqueConstraint("major", "minor", "patch", name="unique_version"),
-    )
-
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-
-    major: Mapped[int]
-    minor: Mapped[int]
-    patch: Mapped[int]
+class Version:
 
     @classmethod
     def from_string(cls, string: str) -> 'Version':
@@ -25,7 +14,12 @@ class Version(Base):
         for i, component in enumerate(components):
             if not component.isdigit():
                 raise ValueError(f"Invalid version number: component {i} is not a digit.")
-        return cls(major=components[0], minor=components[1], patch=components[2])
+        return cls(*components)
+
+    def __init__(self, major: int, minor: int, patch: int):
+        self.major = major
+        self.minor = minor
+        self.patch = patch
 
     def __ge__(self, other: 'Version') -> bool:
         return self > other or self == other
@@ -52,3 +46,19 @@ class Version(Base):
 
     def __str__(self) -> str:
         return f"{self.major}.{self.minor}.{self.patch}"
+
+
+class VersionType(TypeDecorator):
+
+    impl = String
+    cache_ok = True
+
+    def process_bind_param(self, value: Optional[Version], dialect: Dialect) -> Optional[str]:
+        if value is None:
+            return None
+        return str(value)
+
+    def process_result_value(self, value: Optional[str], dialect: Dialect) -> Optional[Version]:
+        if value is None:
+            return None
+        return Version.from_string(value)
