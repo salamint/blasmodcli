@@ -12,7 +12,7 @@ class ModSource(Base):
         UniqueConstraint("game_name", "url", name="unique_source_url_per_game"),
     )
 
-    game_name: Mapped[str] = mapped_column(ForeignKey("Game.name"), primary_key=True)
+    game_name: Mapped[str] = mapped_column(ForeignKey("game.name"), primary_key=True)
     game: Mapped['Game'] = relationship("Game", back_populates="sources")
 
     name: Mapped[str] = mapped_column(primary_key=True)

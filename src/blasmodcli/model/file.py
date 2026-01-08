@@ -10,7 +10,7 @@ class File(Base):
     directory: Mapped[str] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(primary_key=True)
 
-    mod_name: Mapped[str] = mapped_column(ForeignKey("ModInstallation.mod_name"))
+    mod_name: Mapped[str] = mapped_column(ForeignKey("mod_installation.mod_name"))
     mod: Mapped['ModInstallation'] = relationship("ModInstallation", back_populates="files")
 
 
