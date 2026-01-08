@@ -7,18 +7,10 @@ from blasmodcli.model.base import Base
 class Authorship(Base):
     __tablename__ = "authorship"
 
-    game_name: Mapped[str] = mapped_column(ForeignKey("game.name"), primary_key=True)
-    game: Mapped['Game'] = relationship("Game")
-
-    source_name: Mapped[str] = mapped_column(ForeignKey("mod_source.name"), primary_key=True)
-    source: Mapped['ModSource'] = relationship("ModSource")
-
-    mod_name: Mapped[str] = mapped_column(ForeignKey("mod.name"), primary_key=True)
+    mod_id: Mapped[int] = mapped_column(ForeignKey("mod.id"), primary_key=True)
     mod: Mapped['Mod'] = relationship("Mod", back_populates="authors")
 
     name: Mapped[str] = mapped_column(primary_key=True)
 
 
-from blasmodcli.model.game import Game
 from blasmodcli.model.mod import Mod
-from blasmodcli.model.mod_source import ModSource

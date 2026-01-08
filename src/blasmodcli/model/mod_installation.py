@@ -10,7 +10,7 @@ from blasmodcli.model.base import Base
 class ModInstallation(Base):
     __tablename__ = "mod_installation"
 
-    mod_name: Mapped[str] = mapped_column(ForeignKey("mod.name"), primary_key=True)
+    mod_id: Mapped[int] = mapped_column(ForeignKey("mod.id"), primary_key=True)
     mod: Mapped['Mod'] = relationship("Mod")
 
     version_id: Mapped[int] = mapped_column(ForeignKey("version.id"))
