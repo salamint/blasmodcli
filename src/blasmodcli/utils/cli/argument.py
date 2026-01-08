@@ -59,23 +59,19 @@ class Argument:
         return has_default or action_is_not_store or has_multiple_names
 
     def add_argument_to(self, parser: ArgumentParser):
+        kwargs = {
+            "action": self.action,
+            "default": self.default,
+            "help": self.help,
+        }
+
         if self.choices:
-            parser.add_argument(
-                *self.names,
-                action=self.get_action(),
-                choices=self.choices,
-                default=self.default,
-                help=self.help,
-                nargs=self.nargs
-            )
-        else:
-            parser.add_argument(
-                *self.names,
-                action=self.get_action(),
-                default=self.default,
-                help=self.help,
-                nargs=self.nargs
-            )
+            kwargs["choices"] = self.choices
+
+        if self.nargs:
+            kwargs["nargs"] = self.nargs
+
+        parser.add_argument(*self.names, **kwargs)
 
 
 T = TypeVar('T')
