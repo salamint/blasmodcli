@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 from typing import Callable, Dict, Sequence, Union
 
-from blasmodcli.games import Game
+from blasmodcli.model.game import Game
 from blasmodcli.utils.cli.command import MetaCommandHandler
 
 Handler = Union[Callable[[], int], Callable[[...], int]]
@@ -9,9 +9,8 @@ Handler = Union[Callable[[], int], Callable[[...], int]]
 
 class CommandLineInterface:
 
-    def __init__(self, game: 'Game'):
-        self.game = game
-        self.parser = ArgumentParser(self.game.tool_name)
+    def __init__(self):
+        self.parser = ArgumentParser()
         self.subparsers = self.parser.add_subparsers(dest="handler")
         self.handlers: 'Dict[str, MetaCommandHandler]' = {}
 
@@ -19,9 +18,9 @@ class CommandLineInterface:
         handler.add_subparser_to(self.subparsers)
         self.handlers[handler.command] = handler
 
-    def parse_args(self, args: Sequence[str] | None = None) -> int:
+    def parse_args(self, game: 'Game', args: Sequence[str] | None = None) -> int:
         namespace = self.parser.parse_args(args)
         if namespace.handler:
-            return self.handlers[namespace.handler].call_handler(self.game, namespace)
+            return self.handlers[namespace.handler].call_handler(game, namespace)
         self.parser.print_help()
         return 0
