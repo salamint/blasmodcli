@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from enum import IntEnum
-from typing import List, Self
+from typing import List
 from requests import get as request
 
 from sqlalchemy import ForeignKey, UniqueConstraint
@@ -50,8 +50,19 @@ class Mod(Base):
 
     plugin_file_name: Mapped[str]
 
-    dependencies: Mapped[List[Self]] = relationship("Dependency", back_populates="mod")
-    required_by: Mapped[List[Self]] = relationship("Dependency", back_populates="dependency")
+    dependencies: Mapped[List['Dependency']] = relationship(
+        "Dependency",
+        back_populates="mod",
+        foreign_keys="Dependency.mod_id",
+        cascade="all, delete-orphan"
+    )
+
+    required_by: Mapped[List['Dependency']] = relationship(
+        "Dependency",
+        back_populates="dependency",
+        foreign_keys="Dependency.dependency_id",
+        cascade="all, delete-orphan"
+    )
 
     authors: Mapped[List['Authorship']] = relationship("Authorship", back_populates="mod")
 
@@ -82,6 +93,7 @@ class Mod(Base):
 
 
 from blasmodcli.model.authorship import Authorship
+from blasmodcli.model.dependency import Dependency
 from blasmodcli.model.game import Game
 from blasmodcli.model.mod_source import ModSource
 from blasmodcli.model.version import Version
