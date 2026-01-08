@@ -31,10 +31,10 @@ class Mod(Base):
         UniqueConstraint("source_name", "plugin_file_name", name="unique_plugin_file_per_source"),
     )
 
-    game_name: Mapped[str] = mapped_column(ForeignKey("Game.name"), primary_key=True)
+    game_name: Mapped[str] = mapped_column(ForeignKey("game.name"), primary_key=True)
     game: Mapped['Game'] = relationship("Game")
 
-    source_name: Mapped[str] = mapped_column(ForeignKey("ModSource.name"), primary_key=True)
+    source_name: Mapped[str] = mapped_column(ForeignKey("mod_source.name"), primary_key=True)
     source: Mapped['ModSource'] = relationship("ModSource", back_populates="mods")
 
     name: Mapped[str] = mapped_column(primary_key=True)
@@ -42,7 +42,7 @@ class Mod(Base):
     release_date: Mapped[date]
     repository: Mapped[str]
 
-    version_id: Mapped[int] = mapped_column(ForeignKey("Version.id"))
+    version_id: Mapped[int] = mapped_column(ForeignKey("version.id"))
     version: Mapped['Version'] = relationship("Version")
 
     plugin_file_name: Mapped[str]
