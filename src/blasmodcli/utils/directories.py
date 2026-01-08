@@ -30,9 +30,11 @@ class Directories:
         return Directories.get_steam_apps() / "common" / game_name
 
     @staticmethod
-    def require(directory: Path):
+    def require(path: Path, parent: bool = False):
+        directory = path.parent if parent else path
         if not directory.is_dir():
             directory.mkdir(parents=True)
+        return path
 
     def __init__(self, exec_name: str):
         self.cache = Directories.XDG_CACHE / exec_name
