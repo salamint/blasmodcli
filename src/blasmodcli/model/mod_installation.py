@@ -5,19 +5,19 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from blasmodcli.model.base import Base
-from blasmodcli.model.file import File
-from blasmodcli.model.mod import Mod
-from blasmodcli.model.version import Version
+from blasmodcli.model.version import Version, VersionType
 
 
 class ModInstallation(Base):
     __tablename__ = "mod_installation"
 
-    mod_name: Mapped[str] = mapped_column(ForeignKey(Mod.name), primary_key=True)
-    mod: Mapped[Mod] = relationship(Mod)
+    mod_id: Mapped[int] = mapped_column(ForeignKey("mod.id"), primary_key=True)
+    mod: Mapped['Mod'] = relationship("Mod")
 
-    version_id: Mapped[int] = mapped_column(ForeignKey(Version.id))
-    version: Mapped[Version] = relationship(Version)
-
+    version: Mapped['Version'] = mapped_column(VersionType)
     datetime: Mapped[datetime]
-    files: Mapped[List[File]] = relationship(File, back_populates="mod")
+    files: Mapped[List['File']] = relationship("File", back_populates="mod")
+
+
+from blasmodcli.model.file import File
+from blasmodcli.model.mod import Mod
