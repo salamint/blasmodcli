@@ -1,12 +1,13 @@
 from argparse import ArgumentParser
 
-from sqlalchemy import select, create_engine
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from blasmodcli.model import Base, Game
+from blasmodcli.config import Configuration
+from blasmodcli.model import Base
 from blasmodcli.repositories import Warehouse
 
-from blasmodcli.utils import Directories, Message
+from blasmodcli.utils import Directories
 from blasmodcli.utils.cli import CommandLineInterface
 
 APP_NAME = "blasmodcli"
@@ -15,9 +16,10 @@ APP_NAME = "blasmodcli"
 class Application:
 
     def __init__(self):
+        self.directories = Directories(APP_NAME)
+        self.config = Configuration(self.directories.config)
         self.cli = CommandLineInterface()
         self.parser = ArgumentParser()
-        self.directories = Directories(APP_NAME)
 
         self.database_file = Directories.require(self.directories.data / "database.sqlite3", parent=True)
         self.engine = create_engine(f"sqlite:///{self.database_file.absolute()}")
@@ -25,6 +27,7 @@ class Application:
         self.repositories = Warehouse(self.session_maker)
 
         Base.metadata.create_all(self.engine)
+        self.config.load_games(self.repositories.games)
         self.add_parser_arguments()
         self.add_command_handlers()
 
@@ -46,8 +49,7 @@ class Application:
 
     def run(self) -> int:
         namespace = self.parser.parse_args()
-        game = select(Game).where()
-        if game is not None:
-            return self.cli.parse_args(namespace.args)
-        Message.error("No game selected")
-        return 1
+        return self.cli.parse_args(
+            self.repositories.games.get_by_name(namespace.game),
+            namespace.args
+        )
