@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from blasmodcli.config import Configuration
+from blasmodcli.controller import *
 from blasmodcli.model import Base
 from blasmodcli.repositories import Warehouse
 
@@ -45,7 +46,20 @@ class Application:
         )
 
     def add_command_handlers(self):
-        pass
+        # Game commands
+        self.cli.add_handler(Backup)
+        self.cli.add_handler(Configure)
+        self.cli.add_handler(List)
+        self.cli.add_handler(Search)
+        self.cli.add_handler(Update)
+
+        # Mod commands
+        self.cli.add_handler(Activate)
+        self.cli.add_handler(Deactivate)
+        self.cli.add_handler(Info)
+        self.cli.add_handler(Install)
+        self.cli.add_handler(Uninstall)
+        self.cli.add_handler(Upgrade)
 
     def run(self) -> int:
         namespace = self.parser.parse_args()
