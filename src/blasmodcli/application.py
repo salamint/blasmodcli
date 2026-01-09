@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 
 from sqlalchemy import create_engine
 
+from blasmodcli.controller import *
 from blasmodcli.model import Base
 
 from blasmodcli.utils import Directories
@@ -44,7 +45,21 @@ class Application:
         )
 
     def add_command_handlers(self):
-        pass
+        # Game commands
+        self.cli.add_handler(Backup)
+        self.cli.add_handler(Configure)
+        self.cli.add_handler(Launch)
+        self.cli.add_handler(List)
+        self.cli.add_handler(Search)
+        self.cli.add_handler(Update)
+
+        # Mod commands
+        self.cli.add_handler(Download)
+        self.cli.add_handler(Info)
+        self.cli.add_handler(Install)
+        self.cli.add_handler(Remove)
+        self.cli.add_handler(Uninstall)
+        self.cli.add_handler(Upgrade)
 
     def run(self) -> int:
         namespace = self.parser.parse_args()
