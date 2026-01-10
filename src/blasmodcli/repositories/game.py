@@ -1,4 +1,4 @@
-from blasmodcli.model import Game, Mod
+from blasmodcli.model import Game, Mod, ModState
 from blasmodcli.repositories.repository import Repository
 
 
@@ -15,9 +15,14 @@ class GameRepository(Repository):
                 names.append(result.name)
             return names
 
-    def get_mods_for(self, game: Game) -> list[type[Mod]]:
+    def get_mods_for(self, game: Game, state: ModState = ModState.NONE) -> list[type[Mod]]:
         with self.session() as session:
-            return session.query(Mod).filter_by(game_name=game.name).all()
+            mods: list[type[Mod]] = []
+            results = session.query(Mod).filter_by(game_name=game.name).all()
+            for mod in results:
+                if mod.state() >= state:
+                    mods.append(mod)
+            return mods
 
     def sync(self, game: Game):
         with self.session() as session:
