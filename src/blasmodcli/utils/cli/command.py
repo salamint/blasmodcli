@@ -8,7 +8,7 @@ from blasmodcli.exceptions import DoneException, CancelException
 from blasmodcli.model.game import Game
 from blasmodcli.utils import Color
 from blasmodcli.utils.cli import Argument, Choices
-from blasmodcli.utils.io import Message
+from blasmodcli.view import Message
 
 _command_groups: dict[str, 'MetaCommandHandler'] = {}
 
