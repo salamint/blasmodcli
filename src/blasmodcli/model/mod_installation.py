@@ -12,7 +12,7 @@ class ModInstallation(Base):
     __tablename__ = "mod_installation"
 
     mod_id: Mapped[int] = mapped_column(ForeignKey("mod.id"), primary_key=True)
-    mod: Mapped['Mod'] = relationship("Mod")
+    mod: Mapped['Mod'] = relationship("Mod", back_populates="installation")
 
     version: Mapped['Version'] = mapped_column(VersionType)
     datetime: Mapped[datetime]
