@@ -1,5 +1,5 @@
 from blasmodcli.utils import Color
-from blasmodcli.utils.io.progress import Progress
+from blasmodcli.view.progress import Progress
 
 
 class Counter:
