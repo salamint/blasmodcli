@@ -64,6 +64,10 @@ class Mod(Base):
     installation: Mapped[Optional['ModInstallation']] = relationship("ModInstallation", back_populates="mod")
 
     @property
+    def full_name(self):
+        return f"{self.source.name}/{self.name}"
+
+    @property
     def plugin_file(self) -> Path:
         return self.game.plugins_directory / self.plugin_file_name
 
