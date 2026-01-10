@@ -3,7 +3,7 @@ from typing import Callable, Dict, Sequence, Union
 
 from blasmodcli.model.game import Game
 from blasmodcli.repositories import Warehouse
-from blasmodcli.utils.cli.command import MetaCommandHandler
+from blasmodcli.utils.cli.meta_handler import MetaCommandHandler
 
 Handler = Union[Callable[[], int], Callable[[...], int]]
 
