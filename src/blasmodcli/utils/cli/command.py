@@ -6,6 +6,7 @@ from typing import Any
 
 from blasmodcli.exceptions import DoneException, CancelException
 from blasmodcli.model.game import Game
+from blasmodcli.repositories import Warehouse
 from blasmodcli.utils import Color
 from blasmodcli.utils.cli import Argument, Choices
 from blasmodcli.view import Message
@@ -77,8 +78,8 @@ class MetaCommandHandler(ABCMeta):
         for arg in cls.arguments.values():
             arg.add_argument_to(subparser)
 
-    def call_handler(cls, game: Game, namespace: Namespace) -> int:
-        instance = cls(game, namespace)
+    def call_handler(cls, warehouse: Warehouse, game: Game, namespace: Namespace) -> int:
+        instance = cls(warehouse, game, namespace)
 
         try:
             return instance.handle()
@@ -96,10 +97,11 @@ class MetaCommandHandler(ABCMeta):
 
 class CommandHandler(ABC, metaclass=MetaCommandHandler):
 
-    def __init__(self, game: Game, namespace: Namespace):
+    def __init__(self, warehouse: Warehouse, game: Game, namespace: Namespace):
         self.game = game
         for arg in self.arguments:
             setattr(self, arg, getattr(namespace, arg))
+        self.warehouse = warehouse
         self.post_init()
 
     def post_init(self):
