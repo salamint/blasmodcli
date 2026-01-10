@@ -24,17 +24,17 @@ class Application:
         self.database_file = Directories.require(self.directories.data / "database.sqlite3", parent=True)
         self.engine = create_engine(f"sqlite:///{self.database_file.absolute()}")
         self.session_maker = sessionmaker(self.engine)
-        self.repositories = Warehouse(self.session_maker)
+        self.warehouse = Warehouse(self.session_maker)
 
         Base.metadata.create_all(self.engine)
-        self.config.load_games(self.repositories.games)
+        self.config.load_games(self.warehouse.games)
         self.add_parser_arguments()
         self.add_command_handlers()
 
     def add_parser_arguments(self):
         self.parser.add_argument(
             "game",
-            choices=self.repositories.games.get_all_names(),
+            choices=self.warehouse.games.get_all_names(),
             help="Name of the game on which to operate.",
             type=str
         )
@@ -50,6 +50,7 @@ class Application:
     def run(self) -> int:
         namespace = self.parser.parse_args()
         return self.cli.parse_args(
-            self.repositories.games.get_by_name(namespace.game),
+            self.warehouse,
+            self.warehouse.games.get_by_name(namespace.game),
             namespace.args
         )
