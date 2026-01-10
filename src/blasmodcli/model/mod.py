@@ -1,5 +1,6 @@
 from datetime import date
 from enum import IntEnum
+from pathlib import Path
 from typing import List, Optional
 
 from sqlalchemy import ForeignKey, UniqueConstraint
@@ -61,6 +62,23 @@ class Mod(Base):
     authors: Mapped[List['Authorship']] = relationship("Authorship", back_populates="mod")
 
     installation: Mapped[Optional['ModInstallation']] = relationship("ModInstallation", back_populates="mod")
+
+    @property
+    def plugin_file(self) -> Path:
+        return self.game.plugins_directory / self.plugin_file_name
+
+    def is_activated(self) -> bool:
+        return self.plugin_file.is_file()
+
+    def is_installed(self) -> bool:
+        return self.installation is not None
+
+    def state(self) -> ModState:
+        if self.is_activated():
+            return ModState.ACTIVATED
+        elif self.is_installed():
+            return ModState.INSTALLED
+        return ModState.NONE
 
 
 from blasmodcli.model.authorship import Authorship
