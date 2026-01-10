@@ -71,6 +71,8 @@ class MetaCommandHandler(ABCMeta):
         subparser = subparsers.add_parser(cls.command, help=cls.__doc__)
         for arg in cls.arguments.values():
             arg.add_argument_to(subparser)
+        for arg in cls.choices.values():
+            arg.add_arguments_to(subparser)
 
     def call_handler(cls, warehouse: Warehouse, game: Game, namespace: Namespace) -> int:
         instance = cls(warehouse, game, namespace)
