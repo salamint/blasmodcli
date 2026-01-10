@@ -1,11 +1,12 @@
-from abc import ABCMeta, ABC, abstractmethod
+from abc import ABCMeta
 from argparse import Namespace
 from typing import Any, Self
 
 from blasmodcli.exceptions import NothingToDoException, UserCancelException, CommandInMultipleGroupsError
 from blasmodcli.model import Game
 from blasmodcli.repositories import Warehouse
-from blasmodcli.utils.cli import Argument, Choices
+from blasmodcli.utils.cli.argument import Argument
+from blasmodcli.utils.cli.choices import Choices
 from blasmodcli.view import Message
 
 Attributes = dict[str, Any]
@@ -95,20 +96,3 @@ def inherit_from_group(dct: Attributes, group: MetaCommandHandler):
     for arg_name, arg_value in group.arguments.items():
         if arg_name not in dct.keys():
             dct[arg_name] = arg_value.copy()
-
-
-class CommandHandler(ABC, metaclass=MetaCommandHandler):
-
-    def __init__(self, warehouse: Warehouse, game: Game, namespace: Namespace):
-        self.game = game
-        for arg in self.arguments:
-            setattr(self, arg, getattr(namespace, arg))
-        self.warehouse = warehouse
-        self.post_init()
-
-    def post_init(self):
-        pass
-
-    @abstractmethod
-    def handle(self) -> int:
-        raise NotImplementedError
