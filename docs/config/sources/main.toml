@@ -1,7 +1,9 @@
-[blas1.main]
+[main.blas1]
+format = "official"
 url = "https://github.com/BrandenEK/Blasphemous.Modding.Installer/raw/main/BlasphemousMods.json"
 maintainer = "Damocles"
 
-[blas2.main]
+[main.blas2]
+format = "official"
 url = "https://github.com/BrandenEK/Blasphemous.Modding.Installer/raw/main/BlasphemousIIMods.json"
 maintainer = "Damocles"
