@@ -2,9 +2,10 @@ from shutil import unpack_archive
 from urllib.request import urlretrieve
 from requests import HTTPError
 
-from blasmodcli.exceptions import CancelException, DoneException
+from blasmodcli.exceptions import NothingToDoException, UserCancelException
 from blasmodcli.games.game import Game
-from blasmodcli.utils import Color, Directories, Message, MODDING_INSTALLER_REPOSITORY
+from blasmodcli.utils import Color, Directories
+from blasmodcli.view import Message
 from blasmodcli.model.version import Version
 
 
@@ -27,7 +28,7 @@ class Blasphemous(Game):
         up_to_date = current is not None and current >= latest
 
         if self.modding_directory.is_dir() and self.modding_tools.are_installed() and up_to_date:
-            raise DoneException("Modding tools are already up to date.")
+            raise NothingToDoException("Modding tools are already up to date.")
 
         self.download_modding_tools()
         self.warn_and_suggest_backing_up()
@@ -65,7 +66,7 @@ class Blasphemous(Game):
     IF THE GAME OR YOUR PROGRESSION IS DAMAGED IN ANYWAY DURING THIS PROCEDURE.{Color.RESET}
 
     If the game does not start after this step, try following the steps here:
-    {Color.fmt(MODDING_INSTALLER_REPOSITORY, Color.BLUE)}
+    {Color.fmt('TODO: modding tools url', Color.BLUE)}
     If neither work, uninstall then reinstall your game.
 
     {Color.WHITE}IN ANY CASE, WE RECOMMEND YOU TO BACKUP YOUR SAVE FILES.{Color.RESET}""")
@@ -75,4 +76,4 @@ class Blasphemous(Game):
             self.backup_saves()
 
         if not Message.ask("Would you like to proceed to the extraction?"):
-            raise CancelException("Installation process cancelled.")
+            raise UserCancelException("Installation process cancelled.")
