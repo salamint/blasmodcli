@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, CheckConstraint
 from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy.orm import mapped_column
 
@@ -8,8 +8,12 @@ from blasmodcli.model.base import Base
 from blasmodcli.model.version import Version, VersionType
 
 
+# TODO: prevent circular dependencies
 class Dependency(Base):
     __tablename__ = "dependency"
+    __table_args__ = (
+        CheckConstraint("mod_id != dependency_id"),
+    )
 
     mod_id: Mapped[int] = mapped_column(ForeignKey("mod.id"), primary_key=True)
     mod: Mapped['Mod'] = relationship("Mod", back_populates="dependencies", foreign_keys=[mod_id])

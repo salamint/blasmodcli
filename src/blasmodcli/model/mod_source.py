@@ -16,6 +16,7 @@ class ModSource(Base):
     game: Mapped['Game'] = relationship("Game", back_populates="sources")
 
     name: Mapped[str] = mapped_column(primary_key=True)
+    format: Mapped[str]
     url: Mapped[str]
     maintainer: Mapped[str]
 
