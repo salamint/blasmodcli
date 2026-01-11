@@ -4,9 +4,9 @@ from typing import Any, Self
 
 from blasmodcli.exceptions import NothingToDoException, UserCancelException, CommandInMultipleGroupsError
 from blasmodcli.model import Game
-from blasmodcli.repositories import Warehouse
 from blasmodcli.utils.cli.argument import Argument
 from blasmodcli.utils.cli.choices import Choices
+from blasmodcli.utils.cli.context import CommandContext
 from blasmodcli.view import Message
 
 Attributes = dict[str, Any]
@@ -74,8 +74,8 @@ class MetaCommandHandler(ABCMeta):
         for arg in cls.choices.values():
             arg.add_arguments_to(subparser)
 
-    def call_handler(cls, warehouse: Warehouse, game: Game, namespace: Namespace) -> int:
-        instance = cls(warehouse, game, namespace)
+    def call_handler(cls, context: CommandContext, game: Game, namespace: Namespace) -> int:
+        instance = cls(context, game, namespace)
 
         try:
             return instance.handle()
