@@ -1,22 +1,17 @@
 from enum import IntEnum
 from pathlib import Path
 from shutil import unpack_archive
-from time import strptime, struct_time, strftime
+from time import struct_time
 from urllib.request import urlretrieve
 from requests import get as request, HTTPError
 
-from blasmodcli.exceptions import DoneException, CancelException
-from blasmodcli.utils import Color, Message, Table, Counter, Directories
+from blasmodcli.exceptions import NothingToDoException, UserCancelException
+from blasmodcli.utils import Color, Directories
+from blasmodcli.view import Message, Counter
 from blasmodcli.model.version import Version
-import blasmodcli.games.game
 
 
 AUTHORS_SEPARATOR = " && "
-
-
-class DateFormat:
-    SIMPLE = "%Y-%m-%d"
-    DETAILED = "%A, %e %B %Y"
 
 
 class ModState(IntEnum):
@@ -29,42 +24,9 @@ class ModState(IntEnum):
 # TODO: add upgrade method
 class Mod:
 
-    @classmethod
-    def from_raw_data(cls, game: 'blasmodcli.games.game.Game', data: dict):
-        authors = data["Author"].replace(", ", AUTHORS_SEPARATOR).replace(", && ", AUTHORS_SEPARATOR)
-        repository = f"https://github.com/{data['GithubAuthor']}/{data['GithubRepo']}"
-        response = request(f"{repository}/releases/latest")
-        if not response.ok:
-            return None
-        return cls(
-            game,
-            data["Name"],
-            [author.strip() for author in authors.split(AUTHORS_SEPARATOR)],
-            data["Description"],
-            strptime(data["InitialReleaseDate"], DateFormat.SIMPLE),
-            repository,
-            data["PluginFile"],
-            data.get("Dependencies", []),
-            Version.from_string(response.url.split("/")[-1])
-        )
-
-    @classmethod
-    def deserialize(cls, game: 'blasmodcli.games.game.Game', data: dict):
-        return cls(
-            game,
-            data["name"],
-            data["authors"],
-            data["description"],
-            release_date=strptime(data["release_date"], DateFormat.SIMPLE),
-            repository=data["repository"],
-            plugin_file=data["plugin_file"],
-            dependencies=data["dependencies"],
-            version = Version.from_string(data["version"])
-        )
-
     def __init__(
             self,
-            game: 'blasmodcli.games.game.Game',
+            game: 'Game',
             name: str,
             authors: list[str],
             description: str,
@@ -92,10 +54,6 @@ class Mod:
     @property
     def archive(self) -> Path:
         return self.game.mods_directory / f"{self.name}-{self.version}.zip"
-
-    @property
-    def authors_string(self) -> str:
-        return ", ".join(self.authors)
 
     @property
     def dependencies(self) -> set['Mod']:
@@ -128,7 +86,7 @@ class Mod:
     # TODO: also deactivate mods that depend on this one
     def deactivate(self, recursive: bool = True):
         if not self.is_activated() and not recursive:
-            raise DoneException("This mod was not activated.")
+            raise NothingToDoException("This mod was not activated.")
 
         p = Message.progress(f"Deactivating mod '{self.name}'")
         try:
@@ -157,7 +115,7 @@ class Mod:
                 print(f"    {bullet} {name} {version}")
 
             if not Message.ask("Do you want to continue the installation?", default=True):
-                raise CancelException("Installation cancelled.")
+                raise UserCancelException("Installation cancelled.")
 
             failed = []
             counter = Counter(total)
@@ -183,12 +141,6 @@ class Mod:
         if activate_after:
             return self.activate()
         return 0
-
-    def is_activated(self) -> bool:
-        return self.plugin_file.is_file()
-
-    def is_installed(self) -> bool:
-        return self.get_installed_version() is not None
 
     def get_installed_archive(self) -> Path | None:
         try:
@@ -240,35 +192,6 @@ class Mod:
             return ModState.INSTALLED
         return ModState.NONE
 
-    def print(self, local: bool):
-        version = self.get_installed_version() if local else self.version
-        version = version if version is not None else "unknown"
-
-        name = Color.fmt(self.name, Color.WHITE)
-        version = Color.fmt(version, Color.YELLOW)
-        authors = Color.fmt(self.authors_string, Color.GREEN)
-        print(f"{name} {version} by {authors}\n    {self.description}")
-
-    def print_info(self):
-        installed = Color.fmt("No", Color.RED)
-        activated = Color.fmt("No", Color.RED)
-        if self.get_installed_version():
-            installed = Color.fmt("Yes", Color.GREEN)
-            if self.is_activated():
-                activated = Color.fmt("Yes", Color.GREEN)
-
-        table = Table()
-        table.add_row("Name", self.name)
-        table.add_row("Description", self.description)
-        table.add_row("Authors", self.authors_string, Color.GREEN)
-        table.add_row("Repository", self.repository, Color.BLUE)
-        table.add_row("Dependencies", ", ".join(dep.name for dep in self.dependencies))
-        table.add_row("Release date", strftime(DateFormat.DETAILED, self.release_date))
-        table.add_row("Version", self.version, Color.YELLOW)
-        table.add_row("Installed", installed)
-        table.add_row("Activated", activated)
-        table.print()
-
     def resolve_dependencies(self, max_state: 'ModState' = ModState.ACTIVATED) -> list['Mod']:
         dependencies = []
         queue = [self]
@@ -281,18 +204,6 @@ class Mod:
                 dependencies.insert(0, mod)
         return dependencies
 
-    def serialize(self) -> dict:
-        return {
-            "name": self.name,
-            "authors": self.authors,
-            "description": self.description,
-            "release_date": strftime(DateFormat.SIMPLE, self.release_date),
-            "repository": self.repository,
-            "plugin_file": self.plugin_file.name,
-            "dependencies": self.__dependencies,
-            "version": str(self.version)
-        }
-
     def unpack_archive(self, reactivate: bool = True) -> int:
         if self.is_activated() and not reactivate:
             return 0
@@ -300,3 +211,6 @@ class Mod:
             raise FileNotFoundError(f"Mod '{self.name}' is not installed!")
         unpack_archive(self.get_installed_archive(), self.game.modding_directory, "zip")
         return 0
+
+
+from blasmodcli.games.game import Game

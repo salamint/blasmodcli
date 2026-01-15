@@ -5,25 +5,11 @@ from shutil import make_archive, rmtree
 from time import localtime, strftime
 import json
 
-from blasmodcli.exceptions import CancelException, DoneException
+from blasmodcli.exceptions import NothingToDoException, UserCancelException
 from blasmodcli.games.modding_tools import ModdingTools
-from blasmodcli.utils import Directories, Message, Color, Counter
+from blasmodcli.utils import Directories, Color
+from blasmodcli.view import Message, Counter
 from blasmodcli.model.version import Version
-import blasmodcli.mod
-
-MODDING_INSTALLER_REPO = "https://github.com/BrandenEK/Blasphemous.Modding.Installer"
-
-
-class ModdingDirectory(Path):
-
-    def __init__(self, game: 'Game | Path', *args):
-        if isinstance(game, Game):
-            super().__init__(game.directory / "Modding")
-            self.mods = self.joinpath("mods")
-            self.plugins = self.joinpath("plugins")
-            self.skins = self.joinpath("skins")
-        else:
-            super().__init__(game, *args)
 
 
 class Game(ABC):
@@ -48,13 +34,12 @@ class Game(ABC):
         self.is_native = is_native
         self.tool_directories = Directories(self.tool_name)
         self.directory = Directories.get_steam_game_directory(name)
-        self.modding_directory = ModdingDirectory(self)
         self.modding_tools = ModdingTools(self, mod_loader, modding_tools_url)
         self.mods_directory = self.tool_directories.data / "mods"
         self.saves_directory = saves_directory
         self.database_file = self.tool_directories.cache / "mods.json"
         self.mod_sources: list[str] = []
-        self.mods: dict[str, 'blasmodcli.mod.Mod'] = {}
+        self.mods: dict[str, 'Mod'] = {}
 
     def add_mod_source(self, url: str):
         self.mod_sources.append(url)
@@ -74,14 +59,14 @@ class Game(ABC):
 
     def clear_modding_directory(self, force: bool = False) -> int:
         if not self.modding_directory.is_dir():
-            raise DoneException("Nothing to delete.")
+            raise NothingToDoException("Nothing to delete.")
 
         if not force:
             if not Message.ask(
                     "Are you sure you want to delete the 'Modding' directory?"
                     " This will deactivate every mod, and remove current configurations and keybindings."
             ):
-                raise CancelException("Operation cancelled.")
+                raise UserCancelException("Operation cancelled.")
 
         rmtree(self.modding_directory)
         return 0
@@ -132,7 +117,7 @@ class Game(ABC):
             p.bool(response.ok)
         return mods_data
 
-    def get_mod(self, name: str) -> 'blasmodcli.mod.Mod':
+    def get_mod(self, name: str) -> 'Mod':
         mod = self.mods.get(name)
         if mod is None:
             raise KeyError(f"No mod named '{name}' found.")
@@ -141,8 +126,9 @@ class Game(ABC):
     def is_installed(self) -> bool:
         return self.directory.is_dir()
 
-    def list_mods(self, state: 'blasmodcli.mod.ModState' = blasmodcli.mod.ModState.NONE) -> list[blasmodcli.mod.Mod]:
-        mod_list: list[blasmodcli.mod.Mod] = []
+    def list_mods(self, state: 'ModState' = None) -> list['Mod']:
+        state = state if state is not None else ModState.NONE
+        mod_list: list['Mod'] = []
         for mod in self.mods.values():
             if mod.get_state() >= state:
                 mod_list.append(mod)
@@ -152,14 +138,14 @@ class Game(ABC):
         try:
             with self.database_file.open("r") as db:
                 for data in json.load(db):
-                    mod = blasmodcli.mod.Mod.deserialize(self, data)
-                    self.mods[mod.name] = mod
+                    mod = Mod.deserialize(self, data)
+                    self.mods[mod.mod_name] = mod
         except FileNotFoundError:
             update = Color.fmt("update", Color.WHITE)
             raise FileNotFoundError(f"Mod database file not found. Make sure to {update} the mod database.")
 
-    def search(self, terms: list[str]) -> list['blasmodcli.mod.Mod']:
-        matching_mods: list[blasmodcli.mod.Mod] = []
+    def search(self, terms: list[str]) -> list['Mod']:
+        matching_mods: list['Mod'] = []
         for mod in self.list_mods():
             for term in terms:
                 term = term.lower()
@@ -174,10 +160,10 @@ class Game(ABC):
 
         Message.info("Fetching latest mod version...")
         counter = Counter(len(mods_data))
-        mods_list: list[blasmodcli.mod.Mod] = []
+        mods_list: list['Mod'] = []
         for data in mods_data:
             p = counter.add_progress(data["Name"])
-            mod = blasmodcli.mod.Mod.from_raw_data(self, data)
+            mod = Mod.from_raw_data(self, data)
             if mod is not None:
                 mods_list.append(mod)
                 p.version(mod.version)
@@ -190,3 +176,6 @@ class Game(ABC):
             json.dump([mod.serialize() for mod in mods_list], db, indent=2)
         Message.success("Update successful!")
         return 0
+
+
+from blasmodcli.mod import Mod, ModState
