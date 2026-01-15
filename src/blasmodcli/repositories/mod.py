@@ -1,0 +1,25 @@
+from blasmodcli.model import ModSource, Mod, Game
+from blasmodcli.repositories.repository import Repository
+
+
+class ModRepository(Repository):
+
+    def add_all(self, mods: list[Mod]):
+        with self.session() as session:
+            session.add_all(mods)
+            session.commit()
+
+    def get_all_by_name(self, game: Game, name: str) -> list[type[Mod]]:
+        with self.session() as session:
+            return session.query(Mod).filter_by(
+                game_name=game.name,
+                name=name
+            ).all()
+
+    def get_by_name(self, source: ModSource, name: str) -> type[Mod]:
+        with self.session() as session:
+            return session.query(Mod).filter_by(
+                game_name=source.game_name,
+                source_name=source.name,
+                name=name
+            ).one()
