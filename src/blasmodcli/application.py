@@ -24,12 +24,16 @@ class Application:
         self.session_maker = sessionmaker(self.engine)
         self.warehouse = Warehouse(self.session_maker)
 
-        self.parser = ArgumentParser()
-        self.cli = CommandLineInterface(self.config, self.directories, self.warehouse)
-
+        # Initializing the database and updating the games first
         Base.metadata.create_all(self.engine)
         self.config.load_games(self.warehouse.games)
+
+        # Then create the argument parser and give it its arguments
+        self.parser = ArgumentParser()
         self.add_parser_arguments()
+
+        # Finally create the CLI
+        self.cli = CommandLineInterface(self.config, self.directories, self.warehouse)
         self.add_command_handlers()
 
     def add_parser_arguments(self):
