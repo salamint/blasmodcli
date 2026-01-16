@@ -19,6 +19,8 @@ class Game(Base):
     linux_native: Mapped[bool]
     saves_directory: Mapped[Path] = mapped_column(PathType)
 
+    modding_tools: Mapped['ModdingTools'] = relationship("ModdingTools", back_populates="game", cascade="all, delete-orphan")
+
     sources: Mapped[List['ModSource']] = relationship("ModSource", back_populates="game")
 
     @property
@@ -35,3 +37,4 @@ class Game(Base):
 
 
 from blasmodcli.model.mod_source import ModSource
+from blasmodcli.model.modding_tools import ModdingTools
