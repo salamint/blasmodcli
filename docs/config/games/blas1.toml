@@ -1,0 +1,12 @@
+[blas1]
+title = "Blasphemous"
+developer = "The Game Kitchen"
+publisher = "Team17"
+linux_native = true
+saves_directory = "~/.config/unity3d/TheGameKitchen/Blasphemous/Savegames"
+
+[blas1.tools]
+mod_loader = "BepInEx"
+format = "official"
+url = "https://github.com/BrandenEK/Blasphemous.ModdingTools"
+author = "Damocles"
