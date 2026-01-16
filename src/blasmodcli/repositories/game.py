@@ -24,7 +24,7 @@ class GameRepository(Repository):
                     mods.append(mod)
             return mods
 
-    def sync(self, game: Game):
+    def update(self, game: Game):
         with self.session() as session:
             query = session.query(Game).filter_by(id=game.id)
             in_db = query.one_or_none()
