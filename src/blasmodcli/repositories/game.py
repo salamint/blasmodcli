@@ -6,7 +6,7 @@ class GameRepository(Repository):
 
     def get_by_id(self, id: str) -> type[Game]:
         with self.session() as session:
-            return session.query(Game).filter(id=id).one()
+            return session.query(Game).filter(Game.id == id).one()
 
     def get_all_ids(self) -> list[str]:
         with self.session() as session:
@@ -18,7 +18,7 @@ class GameRepository(Repository):
     def get_mods_for(self, game: Game, state: ModState = ModState.NONE) -> list[type[Mod]]:
         with self.session() as session:
             mods: list[type[Mod]] = []
-            results = session.query(Mod).filter_by(game_id=game.id).all()
+            results = session.query(Mod).filter(Mod.game_id == game.id).all()
             for mod in results:
                 if mod.state() >= state:
                     mods.append(mod)
@@ -26,7 +26,7 @@ class GameRepository(Repository):
 
     def update(self, game: Game):
         with self.session() as session:
-            query = session.query(Game).filter_by(id=game.id)
+            query = session.query(Game).filter(Game.id == game.id)
             in_db = query.one_or_none()
             if in_db is not None:
                 query.update({
