@@ -1,8 +1,15 @@
+from sqlalchemy.orm import sessionmaker, Session
+
 from blasmodcli.model import Game, Mod, ModState
+from blasmodcli.repositories.modding_tools import ModdingToolsRepository
 from blasmodcli.repositories.repository import Repository
 
 
 class GameRepository(Repository):
+
+    def __init__(self, session_maker: sessionmaker[Session]):
+        super().__init__(session_maker)
+        self.modding_tools = ModdingToolsRepository(session_maker)
 
     def get_by_id(self, id: str) -> type[Game]:
         with self.session() as session:
@@ -24,17 +31,21 @@ class GameRepository(Repository):
                     mods.append(mod)
             return mods
 
-    def update(self, game: Game):
+    def update(self, game: Game) -> Game:
         with self.session() as session:
             query = session.query(Game).filter(Game.id == game.id)
             in_db = query.one_or_none()
             if in_db is not None:
                 query.update({
-                    "mod_loader": game.mod_loader,
-                    "modding_tools_url": game.modding_tools_url,
+                    "title": game.title,
+                    "developer": game.developer,
+                    "publisher": game.publisher,
                     "linux_native": game.linux_native,
                     "saves_directory": game.saves_directory
                 })
+                self.modding_tools.update(game.modding_tools)
             else:
                 session.add(game)
+                in_db = game
             session.commit()
+            return in_db
