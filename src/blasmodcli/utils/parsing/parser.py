@@ -24,6 +24,7 @@ class ModParser(ABC):
 
     def parse(self) -> Mod:
         mod = self.parse_mod()
+        self.list_parser.mods[mod.name] = mod
         self.list_parser.dependencies[mod.name] = self.parse_dependencies()
         return mod
 
