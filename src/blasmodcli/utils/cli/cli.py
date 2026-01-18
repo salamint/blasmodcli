@@ -1,12 +1,12 @@
 from argparse import ArgumentParser
 from typing import Dict, Sequence
 
-from blasmodcli.config import Configuration
 from blasmodcli.model.game import Game
 from blasmodcli.repositories import Warehouse
 from blasmodcli.utils import Directories
 from blasmodcli.utils.cli.context import CommandContext
 from blasmodcli.utils.cli.meta_handler import MetaCommandHandler
+from blasmodcli.utils.config import Configuration
 
 
 class CommandLineInterface:
