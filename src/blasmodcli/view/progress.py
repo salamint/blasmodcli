@@ -13,7 +13,7 @@ class Progress:
         print(f" {Color.fmt(status, color)}", flush=True)
         self.__status = status
 
-    def bool(self, boolean: bool):
+    def boolean(self, boolean: bool):
         if boolean:
             self.success()
         else:
