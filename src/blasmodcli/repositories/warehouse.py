@@ -13,3 +13,6 @@ class Warehouse:
         self.games = GameRepository(self.session)
         self.mods = ModRepository(self.session)
         self.mod_sources = ModSourceRepository(self.session)
+
+    def commit(self):
+        self.session.commit()

@@ -47,9 +47,6 @@ class ModRepository(Repository):
             Mod.name == mod.name
         )
         in_db = query.one_or_none()
-        if in_db is not None:
-            # TODO: dependencies
-            query.update({})
-        else:
+        if in_db is None:
             self.session.add(mod)
         self.session.commit()
