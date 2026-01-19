@@ -28,20 +28,9 @@ class GameRepository(Repository):
                 mods.append(mod)
         return mods
 
-    def update(self, game: Game) -> Game:
+    def update(self, game: Game):
         query = self.session.query(Game).filter(Game.id == game.id)
         in_db = query.one_or_none()
-        if in_db is not None:
-            query.update({
-                "title": game.title,
-                "developer": game.developer,
-                "publisher": game.publisher,
-                "linux_native": game.linux_native,
-                "saves_directory": game.saves_directory
-            })
-            self.modding_tools.update(game.modding_tools)
-        else:
+        if in_db is None:
             self.session.add(game)
-            in_db = game
         self.session.commit()
-        return in_db

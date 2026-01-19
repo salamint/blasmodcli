@@ -17,12 +17,6 @@ class ModSourceRepository(Repository):
             ModSource.name == source.name
         )
         in_db = query.one_or_none()
-        if in_db is not None:
-            query.update({
-                "format": source.format,
-                "url": source.url,
-                "maintainer": source.maintainer,
-            })
-        else:
+        if in_db is None:
             self.session.add(source)
         self.session.commit()
