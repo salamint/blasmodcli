@@ -1,3 +1,4 @@
+import asyncio
 from abc import ABCMeta
 from argparse import Namespace
 from typing import Any, Self
@@ -78,7 +79,7 @@ class MetaCommandHandler(ABCMeta):
         instance = cls(context, game, namespace)
 
         try:
-            return instance.handle()
+            return asyncio.run(instance.handle())
         except NothingToDoException as e:
             Message.success(str(e))
             return 0
