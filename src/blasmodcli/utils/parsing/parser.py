@@ -1,7 +1,10 @@
 from abc import ABC, abstractmethod
+from typing import Any, Dict, Generator
 
 from blasmodcli.model import Mod, ModSource, Dependency
 from blasmodcli.utils.parsing.meta_parser import MetaModListParser
+
+Object = Dict[str, Any]
 
 
 class ModListParser(ABC, metaclass=MetaModListParser):
@@ -18,12 +21,24 @@ class ModListParser(ABC, metaclass=MetaModListParser):
             mods.append(mod)
 
     @abstractmethod
+    def data(self) -> Generator[Object]:
+        pass
+
+    @abstractmethod
     async def fetch(self):
         pass
 
     @abstractmethod
-    async def parse(self):
+    async def parse(self, data: Object):
         pass
+
+    async def parse_all(self):
+        for data in self.data():
+            await self.parse(data)
+
+    async def parse_mod(self, data: Object):
+        mod = await self.parse(data)
+        self.mods[mod.name] = mod
 
     def resolve_dependencies(self):
         for mod_name, dependencies in self.dependencies.items():
