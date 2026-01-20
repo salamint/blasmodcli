@@ -21,5 +21,5 @@ class CommandHandler(ABC, metaclass=MetaCommandHandler):
         pass
 
     @abstractmethod
-    def handle(self) -> int:
+    async def handle(self) -> int:
         raise NotImplementedError
