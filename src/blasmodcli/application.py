@@ -8,6 +8,7 @@ from blasmodcli.repositories import Warehouse
 
 from blasmodcli.utils import Directories
 from blasmodcli.utils.cli import CommandLineInterface
+from blasmodcli.utils.config import Configuration
 
 APP_NAME = "blasmodcli"
 
@@ -16,15 +17,14 @@ class Application:
 
     def __init__(self):
         self.directories = Directories(APP_NAME)
-        self.config = Configuration(self.directories.config)
-
         self.database_file = Directories.require(self.directories.data / "database.sqlite3", parent=True)
         self.engine = create_engine(f"sqlite:///{self.database_file.absolute()}")
         self.warehouse = Warehouse(self.engine)
+        self.config = Configuration(self.directories.config, self.warehouse)
 
         # Initializing the database and updating the games first
         Base.metadata.create_all(self.engine)
-        self.config.load_games(self.warehouse.games)
+        self.config.games.load_all()
 
         # Then create the argument parser and give it its arguments
         self.parser = ArgumentParser()
