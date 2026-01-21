@@ -9,10 +9,10 @@ from blasmodcli.model.base import Base
 class ModSource(Base):
     __tablename__ = "mod_source"
     __table_args__ = (
-        UniqueConstraint("game_name", "url", name="unique_source_url_per_game"),
+        UniqueConstraint("game_id", "url", name="unique_source_url_per_game"),
     )
 
-    game_name: Mapped[str] = mapped_column(ForeignKey("game.name"), primary_key=True)
+    game_id: Mapped[str] = mapped_column(ForeignKey("game.id"), primary_key=True)
     game: Mapped['Game'] = relationship("Game", back_populates="sources")
 
     name: Mapped[str] = mapped_column(primary_key=True)

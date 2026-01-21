@@ -25,14 +25,14 @@ class ModState(IntEnum):
 class Mod(Base):
     __tablename__ = "mod"
     __table_args__ = (
-        UniqueConstraint("game_name", "source_name", "name", name="unique_name_per_source_per_game"),
-        UniqueConstraint("game_name", "source_name", "repository", name="unique_repository_per_source_per_game"),
-        UniqueConstraint("game_name", "source_name", "plugin_file_name", name="unique_plugin_file_per_source_per_game"),
+        UniqueConstraint("game_id", "source_name", "name", name="unique_name_per_source_per_game"),
+        UniqueConstraint("game_id", "source_name", "repository", name="unique_repository_per_source_per_game"),
+        UniqueConstraint("game_id", "source_name", "plugin_file_name", name="unique_plugin_file_per_source_per_game"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
-    game_name: Mapped[str] = mapped_column(ForeignKey("game.name"))
+    game_id: Mapped[str] = mapped_column(ForeignKey("game.id"))
     game: Mapped['Game'] = relationship("Game")
 
     source_name: Mapped[str] = mapped_column(ForeignKey("mod_source.name"))

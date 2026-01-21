@@ -36,7 +36,7 @@ class OfficialModParser(ModParser):
     def parse_mod(self) -> Mod:
         repository = f"https://github.com/{self.data['GithubAuthor']}/{self.data['GithubRepo']}"
         mod = Mod(
-            game_name=self.list_parser.source.game.name,
+            game_id=self.list_parser.source.game.id,
             source_name=self.list_parser.source.name,
             name=self.get_name(),
             description=self.data["Description"],

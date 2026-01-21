@@ -12,14 +12,14 @@ class ModRepository(Repository):
     def get_all_by_name(self, game: Game, name: str) -> list[type[Mod]]:
         with self.session() as session:
             return session.query(Mod).filter_by(
-                game_name=game.name,
+                game_id=game.id,
                 name=name
             ).all()
 
     def get_by_name(self, source: ModSource, name: str) -> type[Mod]:
         with self.session() as session:
             return session.query(Mod).filter_by(
-                game_name=source.game_name,
+                game_id=source.game_id,
                 source_name=source.name,
                 name=name
             ).one()
