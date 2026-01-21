@@ -35,7 +35,7 @@ class Application:
     def add_parser_arguments(self):
         self.parser.add_argument(
             "game",
-            choices=self.warehouse.games.get_all_names(),
+            choices=self.warehouse.games.get_all_ids(),
             help="Name of the game on which to operate.",
             type=str
         )
@@ -51,6 +51,6 @@ class Application:
     def run(self) -> int:
         namespace = self.parser.parse_args()
         return self.cli.parse_args(
-            self.warehouse.games.get_by_name(namespace.game),
+            self.warehouse.games.get_by_id(namespace.game),
             namespace.args
         )
