@@ -1,7 +1,6 @@
 from argparse import ArgumentParser
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 from blasmodcli.config import Configuration
 from blasmodcli.model import Base
@@ -21,8 +20,7 @@ class Application:
 
         self.database_file = Directories.require(self.directories.data / "database.sqlite3", parent=True)
         self.engine = create_engine(f"sqlite:///{self.database_file.absolute()}")
-        self.session_maker = sessionmaker(self.engine)
-        self.warehouse = Warehouse(self.session_maker)
+        self.warehouse = Warehouse(self.engine)
 
         # Initializing the database and updating the games first
         Base.metadata.create_all(self.engine)
@@ -54,7 +52,9 @@ class Application:
 
     def run(self) -> int:
         namespace = self.parser.parse_args()
-        return self.cli.parse_args(
+        exit_code = self.cli.parse_args(
             self.warehouse.games.get_by_id(namespace.game),
             namespace.args
         )
+        self.warehouse.session.close()
+        return exit_code
