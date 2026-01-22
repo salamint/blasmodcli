@@ -28,4 +28,4 @@ class Configuration:
             for key, attrs in data.items():
                 game = Game(**attrs)
                 self.games[key] = game
-                repository.sync(game)
+                repository.update(game)

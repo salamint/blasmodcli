@@ -1,7 +1,7 @@
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import Session
 
 
 class Repository:
 
-    def __init__(self, session_maker: sessionmaker[Session]):
-        self.session = session_maker
+    def __init__(self, session: Session):
+        self.session = session
