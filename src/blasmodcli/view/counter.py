@@ -1,24 +1,27 @@
 from blasmodcli.utils import Color
-from blasmodcli.view.progress import Progress
+from blasmodcli.view.message import Message
 
 
 class Counter:
 
-    def __init__(self, total: int):
-        self.counter = 1
+    def __init__(self, total: int, message: str):
+        self.done = 0
         self.total = total
+        self.message = message
 
-    def get_prefix(self):
-        return Color.fmt(f"[{self.counter}/{self.total}]", Color.GREEN)
+    def __str__(self) -> str:
+        return f"{self.done}/{self.total}"
 
-    def add_item(self, message: str):
-        print(f"{self.get_prefix()} {message}")
-        self.increment()
-
-    def add_progress(self, message: str) -> 'Progress':
-        print(f"{self.get_prefix()} {message}", end="", flush=True)
-        self.increment()
-        return Progress()
+    @property
+    def finished(self):
+        return self.done == self.total
 
     def increment(self):
-        self.counter += 1
+        self.done += 1
+
+    def print(self):
+        color = Color.GREEN if self.finished else Color.YELLOW
+        print(end="\r")
+        Message.print(Color.YELLOW, f"{self.message}... {Color.fmt(self, color)}", nl=False)
+        if self.finished:
+            print(flush=True)
