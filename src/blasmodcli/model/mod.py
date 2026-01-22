@@ -18,8 +18,9 @@ class DateFormat:
 
 class ModState(IntEnum):
     NONE = 0
-    INSTALLED = 1
-    ACTIVATED = 2
+    CACHED = 1
+    INSTALLED = 2
+    ACTIVATED = 3
 
 
 class Mod(Base):
@@ -64,6 +65,11 @@ class Mod(Base):
     installation: Mapped[Optional['ModInstallation']] = relationship("ModInstallation", back_populates="mod")
 
     @property
+    def archive_name(self) -> str:
+        name = self.name.replace(" ", "_")
+        return f"{self.source_name}-{name}-{self.version}.zip"
+
+    @property
     def full_name(self):
         return f"{self.source.name}/{self.name}"
 
@@ -74,14 +80,20 @@ class Mod(Base):
     def is_activated(self) -> bool:
         return self.plugin_file.is_file()
 
+    def is_cached(self, cache_directory: Path) -> bool:
+        archive = cache_directory / self.archive_name
+        return archive.is_file()
+
     def is_installed(self) -> bool:
         return self.installation is not None
 
-    def state(self) -> ModState:
+    def state(self, cache_directory: Path) -> ModState:
         if self.is_activated():
             return ModState.ACTIVATED
         elif self.is_installed():
             return ModState.INSTALLED
+        elif self.is_cached(cache_directory):
+            return ModState.CACHED
         return ModState.NONE
 
 
