@@ -1,31 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Iterator
+from typing import Any, Dict, Generator
 
 from blasmodcli.model import Mod, ModSource, Dependency
 from blasmodcli.utils.parsing.meta_parser import MetaModListParser
 
-
-class ModParser(ABC):
-
-    def __init__(self, list_parser: 'ModListParser'):
-        self.list_parser = list_parser
-
-    @abstractmethod
-    def get_name(self) -> str:
-        pass
-
-    @abstractmethod
-    def parse_mod(self) -> Mod:
-        pass
-
-    @abstractmethod
-    def parse_dependencies(self) -> list[str]:
-        pass
-
-    def parse(self) -> Mod:
-        mod = self.parse_mod()
-        self.list_parser.dependencies[mod.name] = self.parse_dependencies()
-        return mod
+Object = Dict[str, Any]
 
 
 class ModListParser(ABC, metaclass=MetaModListParser):
@@ -34,26 +13,34 @@ class ModListParser(ABC, metaclass=MetaModListParser):
         self.source = source
         self.mods: dict[str, Mod] = {}
         self.dependencies: dict[str, list[str]] = {}
+        self.done = 0
+        self.total = 0
 
-    def __iter__(self) -> Iterator[ModParser]:
-        return self
-
-    def __len__(self) -> int:
-        return self.count()
+    def extend(self, mods: list[Mod]):
+        for mod in self.mods.values():
+            mods.append(mod)
 
     @abstractmethod
-    def __next__(self) -> 'ModParser':
+    def data(self) -> Generator[Object]:
         pass
 
     @abstractmethod
-    def count(self) -> int:
+    async def fetch(self):
         pass
 
     @abstractmethod
-    def fetch(self):
+    async def parse(self, data: Object):
         pass
 
-    def add_dependencies(self):
+    async def parse_all(self):
+        for data in self.data():
+            await self.parse(data)
+
+    async def parse_mod(self, data: Object):
+        mod = await self.parse(data)
+        self.mods[mod.name] = mod
+
+    def resolve_dependencies(self):
         for mod_name, dependencies in self.dependencies.items():
             mod = self.mods[mod_name]
             for dependency_name in dependencies:
