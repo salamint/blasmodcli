@@ -16,7 +16,7 @@ class ModNameError(ArgumentValueError):
 class UnknownModError(ModNameError):
 
     def __str__(self) -> str:
-        return f"Unknown mod '{self.mod_name}' for the game '{self.game.name}'."
+        return f"Unknown mod '{self.mod_name}' for the game '{self.game.title}'."
 
 
 class MultipleModsError(ModNameError):
@@ -28,6 +28,6 @@ class MultipleModsError(ModNameError):
     def __str__(self) -> str:
         sources = ", ".join(self.sources)
         return (
-            f"Multiple sources available for the mod '{self.mod_name}' for the game '{self.game.name}': {sources}.\n"
+            f"Multiple sources available for the mod '{self.mod_name}' for the game '{self.game.title}': {sources}.\n"
             f"Please rerun the same command and prepend the name of the mod with the name of the source."
         )
