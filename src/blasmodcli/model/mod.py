@@ -40,6 +40,7 @@ class Mod(Base):
     source: Mapped['ModSource'] = relationship("ModSource", back_populates="mods")
 
     name: Mapped[str]
+    display_name: Mapped[str]
     description: Mapped[str]
     release_date: Mapped[date]
     repository: Mapped[str]
@@ -66,8 +67,7 @@ class Mod(Base):
 
     @property
     def archive_name(self) -> str:
-        name = self.name.replace(" ", "_")
-        return f"{self.source_name}-{name}-{self.version}.zip"
+        return f"{self.game_id}-{self.source_name}-{self.name}-{self.version}.zip"
 
     @property
     def full_name(self):
