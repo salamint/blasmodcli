@@ -2,7 +2,6 @@ from argparse import ArgumentParser
 
 from sqlalchemy import create_engine
 
-from blasmodcli.config import Configuration
 from blasmodcli.model import Base
 from blasmodcli.repositories import Warehouse
 
