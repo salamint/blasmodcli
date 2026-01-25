@@ -15,6 +15,8 @@ class CommandHandler(ABC, metaclass=MetaCommandHandler):
         self.game = game
         for arg in self.arguments:
             setattr(self, arg, getattr(namespace, arg))
+        for choice in self.choices:
+            setattr(self, choice, getattr(namespace, choice))
         self.post_init()
 
     def post_init(self):
