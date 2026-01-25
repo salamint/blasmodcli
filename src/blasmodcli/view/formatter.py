@@ -25,10 +25,11 @@ class Formatter:
         return self.mod.version
 
     def summary(self, local: bool):
+        source = Color.fmt(f"{self.mod.source_name}/", Color.MAGENTA)
         name = Color.fmt(self.mod.name, Color.BLUE if self.mod.is_library else Color.WHITE)
         version = Color.fmt(self.get_version(local), Color.YELLOW)
         authors = Color.fmt(self.authors_list(), Color.GREEN)
-        print(f"{name} {version} by {authors}\n    {self.mod.description}")
+        print(f"{source}{name} {version} by {authors}\n    {self.mod.description}")
 
     def print_info(self):
         installed = Color.fmt("No", Color.RED)
