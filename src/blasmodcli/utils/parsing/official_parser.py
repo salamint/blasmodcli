@@ -69,12 +69,15 @@ class OfficialModListParser(ModListParser):
         repository = f"https://github.com/{data['GithubAuthor']}/{data['GithubRepo']}"
         async with ClientSession() as session:
             version = await fetch_latest_version(session, repository)
+        display_name = data["Name"]
+        name = convert_to_name(display_name)
         mod = Mod(
             game_id=self.source.game_id,
             source_name=self.source.name,
-            name=convert_to_name(data["Name"]),
-            display_name=data["Name"],
+            name=name,
+            display_name=display_name,
             description=data["Description"],
+            is_library=name.endswith("-framework"),
             release_date=datetime.strptime(data["InitialReleaseDate"], DateFormat.SIMPLE).date(),
             repository=repository,
             plugin_file_name=data["PluginFile"],
