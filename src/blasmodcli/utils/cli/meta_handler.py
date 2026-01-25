@@ -79,6 +79,9 @@ class MetaCommandHandler(ABCMeta):
         instance = cls(context, game, namespace)
 
         try:
+            exit_code = instance.post_init()
+            if exit_code:
+                return exit_code
             return asyncio.run(instance.handle())
         except NothingToDoException as e:
             Message.success(str(e))

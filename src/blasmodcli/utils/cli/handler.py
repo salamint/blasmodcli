@@ -17,7 +17,6 @@ class CommandHandler(ABC, metaclass=MetaCommandHandler):
             setattr(self, arg, getattr(namespace, arg))
         for choice in self.choices:
             setattr(self, choice, getattr(namespace, choice))
-        self.post_init()
 
     def post_init(self):
         pass
