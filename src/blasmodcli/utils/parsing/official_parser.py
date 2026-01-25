@@ -4,24 +4,42 @@ from datetime import datetime
 from aiohttp import ClientSession
 from typing import Generator
 
-from blasmodcli.model import Authorship, Mod, ModSource
+from blasmodcli.exceptions.parsing import NameConversionError
+from blasmodcli.model import Authorship, Mod, ModSource, Version
 from blasmodcli.utils.parsing.parser import ModListParser, Object
 from blasmodcli.view import DateFormat
 
 AUTHORS_SEPARATOR = " && "
 
 
-async def fetch_latest_version(session: ClientSession, repository: str) -> str:
+async def fetch_latest_version(session: ClientSession, repository: str) -> Version:
     url = f"{repository}/releases/latest"
     async with session.get(url) as response:
         response.raise_for_status()
-        return response.url.path
+        version_string = response.url.parts[-1]
+        return Version.from_tag(version_string)
 
 
 def parse_authors(string: str) -> Generator[str]:
     with_separators = string.replace(", ", AUTHORS_SEPARATOR).replace(", && ", AUTHORS_SEPARATOR)
     for name in with_separators.split(AUTHORS_SEPARATOR):
         yield name.strip()
+
+
+def convert_to_name(display_name: str) -> str:
+    name = ""
+    for i, character in enumerate(display_name):
+        if character == " " and i > 0:
+            name += "-"
+        elif character.isalpha() and character.isascii():
+            name += character.lower()
+
+    try:
+        while name[-1] == "-":
+            name = name[:-1]
+    except IndexError:
+        raise NameConversionError(display_name)
+    return name
 
 
 class OfficialModListParser(ModListParser):
@@ -52,11 +70,15 @@ class OfficialModListParser(ModListParser):
         repository = f"https://github.com/{data['GithubAuthor']}/{data['GithubRepo']}"
         async with ClientSession() as session:
             version = await fetch_latest_version(session, repository)
+        display_name = data["Name"]
+        name = convert_to_name(display_name)
         mod = Mod(
             game_id=self.source.game_id,
             source_name=self.source.name,
-            name=data["Name"],
+            name=name,
+            display_name=display_name,
             description=data["Description"],
+            is_library=(name == "modding-api" or name.endswith("-framework")),
             release_date=datetime.strptime(data["InitialReleaseDate"], DateFormat.SIMPLE).date(),
             repository=repository,
             plugin_file_name=data["PluginFile"],
