@@ -7,6 +7,12 @@ class ModSourceRepository(Repository):
     def get_all_by_game(self, game: Game) -> list[type[ModSource]]:
         return self.session.query(ModSource).filter(ModSource.game_id == game.id).all()
 
+    def get_by_name(self, game: Game, name: str) -> type[ModSource] | None:
+        return self.session.query(ModSource).filter(
+            ModSource.game_id == game.id,
+            ModSource.name == name
+        ).one_or_none()
+
     def update_all(self, sources: list[ModSource]):
         for source in sources:
             self.update(source)
