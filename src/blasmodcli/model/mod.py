@@ -42,6 +42,7 @@ class Mod(Base):
     name: Mapped[str]
     display_name: Mapped[str]
     description: Mapped[str]
+    is_library: Mapped[bool]
     release_date: Mapped[date]
     repository: Mapped[str]
     version: Mapped['Version'] = mapped_column(VersionType)
