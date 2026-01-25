@@ -5,18 +5,19 @@ from aiohttp import ClientSession
 from typing import Generator
 
 from blasmodcli.exceptions.parsing import NameConversionError
-from blasmodcli.model import Authorship, Mod, ModSource
+from blasmodcli.model import Authorship, Mod, ModSource, Version
 from blasmodcli.utils.parsing.parser import ModListParser, Object
 from blasmodcli.view import DateFormat
 
 AUTHORS_SEPARATOR = " && "
 
 
-async def fetch_latest_version(session: ClientSession, repository: str) -> str:
+async def fetch_latest_version(session: ClientSession, repository: str) -> Version:
     url = f"{repository}/releases/latest"
     async with session.get(url) as response:
         response.raise_for_status()
-        return response.url.path
+        version_string = response.url.parts[-1]
+        return Version.from_tag(version_string)
 
 
 def parse_authors(string: str) -> Generator[str]:
@@ -77,7 +78,7 @@ class OfficialModListParser(ModListParser):
             name=name,
             display_name=display_name,
             description=data["Description"],
-            is_library=name.endswith("-framework"),
+            is_library=(name == "modding-api" or name.endswith("-framework")),
             release_date=datetime.strptime(data["InitialReleaseDate"], DateFormat.SIMPLE).date(),
             repository=repository,
             plugin_file_name=data["PluginFile"],
