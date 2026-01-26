@@ -84,10 +84,8 @@ class Mod(Base):
 
     def get_cached_version(self, cache_directory: Path) -> Version | None:
         latest_cached = None
-        for entry in cache_directory.iterdir():
+        for entry in cache_directory.glob(f"{self.game_id}-{self.source_name}-{self.name}-*.zip"):
             if not entry.is_file():
-                continue
-            if not entry.match(f"{self.game_id}-{self.source_name}-{self.name}-*.zip"):
                 continue
             match = ARCHIVE_FILENAME_PATTERN.match(entry.name)
             if match is None:
