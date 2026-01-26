@@ -13,10 +13,18 @@ class CommandHandler(ABC, metaclass=MetaCommandHandler):
         self.directories = context.directories
         self.warehouse = context.warehouse
         self.game = game
-        for arg in self.arguments:
-            setattr(self, arg, getattr(namespace, arg))
-        for choice in self.choices:
-            setattr(self, choice, getattr(namespace, choice))
+        for name, arg in self.arguments.items():
+            try:
+                value = getattr(namespace, name)
+            except AttributeError:
+                value = arg.default
+            setattr(self, name, value)
+        for name, choice in self.choices.items():
+            try:
+                value = getattr(namespace, name)
+            except AttributeError:
+                value = choice.default
+            setattr(self, name, value)
 
     def post_init(self):
         pass
