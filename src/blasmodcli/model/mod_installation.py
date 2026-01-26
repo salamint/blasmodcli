@@ -16,7 +16,7 @@ class ModInstallation(Base):
 
     version: Mapped['Version'] = mapped_column(VersionType)
     datetime: Mapped[datetime]
-    files: Mapped[List['File']] = relationship("File", back_populates="mod")
+    files: Mapped[List['File']] = relationship("File", back_populates="mod_installation")
 
 
 from blasmodcli.model.file import File
