@@ -21,7 +21,7 @@ class MetaCommandHandler(ABCMeta):
     def get_group(metacls, name: str, bases: tuple[type]) -> Self | None:
         in_group = None
         for group_name, group in metacls._command_groups.items():
-            if group_name not in bases:
+            if group_name not in (base.__name__ for base in bases):
                 continue
             if in_group is not None:
                 group_names = list(metacls._command_groups.keys())
@@ -53,6 +53,10 @@ class MetaCommandHandler(ABCMeta):
             elif isinstance(value, Choices):
                 cls.choices[attr] = value
 
+        group_annotations = dct.get("__group_annotations__")
+        if group_annotations is not None:
+            group_annotations.update(cls.__annotations__)
+            cls.__annotations__ = group_annotations
         cls.add_annotations()
 
     @property
@@ -95,10 +99,7 @@ class MetaCommandHandler(ABCMeta):
 
 
 def inherit_from_group(dct: Attributes, group: MetaCommandHandler):
-    grp_annotations = group.__annotations__.copy()
-    grp_annotations.update(dct.get("__annotations__", {}))
-    dct["__annotations__"] = grp_annotations
-
+    dct["__group_annotations__"] = group.__annotations__.copy()
     for arg_name, arg_value in group.arguments.items():
         if arg_name not in dct.keys():
             dct[arg_name] = arg_value.copy()
