@@ -19,5 +19,8 @@ class File(Base):
     def path(self) -> Path:
         return self.mod_installation.mod.game.modding_directory / self.directory / self.name
 
+    def exists(self) -> bool:
+        return self.path.is_file()
+
 
 from blasmodcli.model.mod_installation import ModInstallation
