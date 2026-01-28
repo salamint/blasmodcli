@@ -1,4 +1,3 @@
-import re
 from datetime import date
 from enum import IntEnum
 from pathlib import Path
@@ -10,9 +9,7 @@ from sqlalchemy.orm import mapped_column
 
 from blasmodcli.model.base import Base
 from blasmodcli.model.version import Version, VersionType
-
-
-ARCHIVE_FILENAME_PATTERN = re.compile(r"^(?P<game_id>[a-z]+)-(?P<source_name>[a-z]+)-(?P<mod_name>[a-z]+)-(?P<version>[0-9]+\.[0-9]+\.[0-9]+).zip$")
+from blasmodcli.utils.caching import CacheDirectory
 
 
 class DateFormat:
@@ -70,10 +67,6 @@ class Mod(Base):
     installation: Mapped[Optional['ModInstallation']] = relationship("ModInstallation", back_populates="mod")
 
     @property
-    def archive_name(self) -> str:
-        return f"{self.game_id}-{self.source_name}-{self.name}-{self.version}.zip"
-
-    @property
     def full_name(self):
         return f"{self.source.name}/{self.name}"
 
@@ -81,26 +74,13 @@ class Mod(Base):
     def plugin_file(self) -> Path:
         return self.game.plugins_directory / self.plugin_file_name
 
-    def get_latest_cached_version(self, cache_directory: Path) -> Version | None:
-        latest_cached = None
-        for entry in cache_directory.glob(f"{self.game_id}-{self.source_name}-{self.name}-*.zip"):
-            if not entry.is_file():
-                continue
-            match = ARCHIVE_FILENAME_PATTERN.match(entry.name)
-            if match is None:
-                continue
-            version = Version.from_tag(match.group("version"))
-            if latest_cached is None or version > latest_cached:
-                latest_cached = version
-        return latest_cached
-
-    def is_cached(self, cache_directory: Path) -> bool:
-        return self.get_latest_cached_version(cache_directory) is not None
+    def is_cached(self, cache_directory: CacheDirectory) -> bool:
+        return cache_directory.get_latest_version(self) is not None
 
     def is_installed(self) -> bool:
         return self.installation is not None
 
-    def state(self, cache_directory: Path) -> ModState:
+    def state(self, cache_directory: CacheDirectory) -> ModState:
         if self.is_cached(cache_directory):
             if self.is_installed():
                 return ModState.INSTALLED
