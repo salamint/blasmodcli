@@ -76,6 +76,20 @@ class Mod(Base):
     def is_installed(self) -> bool:
         return self.installation is not None
 
+    def resolve_dependencies(self) -> list[Mod]:
+        all_dependencies = [dep.dependency for dep in self.dependencies]
+        index = 0
+        total = len(all_dependencies)
+        while index < total:
+            mod = all_dependencies[index]
+            for dep in mod.dependencies:
+                if dep.dependency in all_dependencies:
+                    continue
+                all_dependencies.append(dep.dependency)
+                total += 1
+            index += 1
+        return all_dependencies
+
 
 from blasmodcli.model.authorship import Authorship
 from blasmodcli.model.dependency import Dependency
