@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from argparse import Namespace
 
 from blasmodcli.model import Game
+from blasmodcli.utils.caching import CacheDirectory
 from blasmodcli.utils.cli.context import CommandContext
 from blasmodcli.utils.cli.meta_handler import MetaCommandHandler
 
@@ -12,6 +13,7 @@ class CommandHandler(ABC, metaclass=MetaCommandHandler):
         self.config = context.config
         self.directories = context.directories
         self.warehouse = context.warehouse
+        self.cache = CacheDirectory(self.directories.cache)
         self.game = game
         for name, arg in self.arguments.items():
             try:
