@@ -9,7 +9,6 @@ from sqlalchemy.orm import mapped_column
 
 from blasmodcli.model.base import Base
 from blasmodcli.model.version import Version, VersionType
-from blasmodcli.utils.caching import CacheDirectory
 
 
 class DateFormat:
@@ -74,18 +73,8 @@ class Mod(Base):
     def plugin_file(self) -> Path:
         return self.game.plugins_directory / self.plugin_file_name
 
-    def is_cached(self, cache_directory: CacheDirectory) -> bool:
-        return cache_directory.get_latest_version(self) is not None
-
     def is_installed(self) -> bool:
         return self.installation is not None
-
-    def state(self, cache_directory: CacheDirectory) -> ModState:
-        if self.is_cached(cache_directory):
-            if self.is_installed():
-                return ModState.INSTALLED
-            return ModState.CACHED
-        return ModState.NONE
 
 
 from blasmodcli.model.authorship import Authorship
