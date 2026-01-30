@@ -12,7 +12,7 @@ class UpdateList:
         self.minimum_column_width = 0
 
     def add(self, mod: Mod):
-        string = f"{mod.name} {Color.fmt(mod.version, Color.YELLOW)}"
+        string = f"{mod.name} {Color.fmt(mod.latest_version, Color.YELLOW)}"
         length = len(string)
         print(length)
         self.strings.append(string)

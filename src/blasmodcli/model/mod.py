@@ -44,7 +44,7 @@ class Mod(Base):
     is_library: Mapped[bool]
     release_date: Mapped[date]
     repository: Mapped[str]
-    version: Mapped['Version'] = mapped_column(VersionType)
+    latest_version: Mapped['Version'] = mapped_column(VersionType)
     plugin_file_name: Mapped[str]
 
     dependencies: Mapped[List['Dependency']] = relationship(
@@ -76,16 +76,16 @@ class Mod(Base):
     def is_installed(self) -> bool:
         return self.installation is not None
 
-    def resolve_dependencies(self) -> list[Mod]:
-        all_dependencies = [dep.dependency for dep in self.dependencies]
+    def resolve_dependencies(self) -> list[Dependency]:
+        all_dependencies = [dep for dep in self.dependencies]
         index = 0
         total = len(all_dependencies)
         while index < total:
-            mod = all_dependencies[index]
+            mod = all_dependencies[index].dependency
             for dep in mod.dependencies:
-                if dep.dependency in all_dependencies:
+                if dep in all_dependencies:
                     continue
-                all_dependencies.append(dep.dependency)
+                all_dependencies.append(dep)
                 total += 1
             index += 1
         return all_dependencies
