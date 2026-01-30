@@ -30,7 +30,7 @@ class Formatter:
             if self.mod.installation is not None:
                 return self.mod.installation.version
             return "unknown"
-        return self.mod.version
+        return self.mod.latest_version
 
     def summary(self, local: bool):
         source = Color.fmt(f"{self.mod.source_name}/", Color.MAGENTA)
@@ -54,7 +54,7 @@ class Formatter:
         table.add_row("Repository", self.mod.repository, Color.BLUE)
         table.add_row("Dependencies", ", ".join(dep.dependency.name for dep in self.mod.dependencies))
         table.add_row("Release date", self.mod.release_date.strftime(DateFormat.DETAILED))
-        table.add_row("Latest version", self.mod.version, Color.YELLOW)
+        table.add_row("Latest version", self.mod.latest_version, Color.YELLOW)
         table.add_row("Cached", format_bool(is_cached))
         table.add_row("Installed", format_bool(is_installed))
         if is_cached:
