@@ -66,15 +66,16 @@ class Mod(Base):
     installation: Mapped[Optional['ModInstallation']] = relationship("ModInstallation", back_populates="mod")
 
     @property
+    def is_installed(self) -> bool:
+        return self.installation is not None
+
+    @property
     def full_name(self):
         return f"{self.source.name}/{self.name}"
 
     @property
     def plugin_file(self) -> Path:
         return self.game.plugins_directory / self.plugin_file_name
-
-    def is_installed(self) -> bool:
-        return self.installation is not None
 
     def resolve_dependencies(self) -> list[Dependency]:
         all_dependencies = [dep for dep in self.dependencies]
