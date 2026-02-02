@@ -28,21 +28,18 @@ class ModListParser(ABC, metaclass=MetaModListParser):
     async def fetch(self):
         pass
 
+    async def parse(self, data: Object) -> Mod:
+        mod = await self.parse_internal(data)
+        self.mods[mod.name] = mod
+        return mod
+
     @abstractmethod
-    async def parse(self, data: Object):
+    async def parse_internal(self, data: Object) -> Mod:
         pass
 
-    async def parse_all(self):
-        for data in self.data():
-            await self.parse(data)
-
-    async def parse_mod(self, data: Object):
-        mod = await self.parse(data)
-        self.mods[mod.name] = mod
-
     def resolve_dependencies(self):
-        for mod_name, dependencies in self.dependencies.items():
+        for mod_name, mod_dependencies in self.dependencies.items():
             mod = self.mods[mod_name]
-            for dependency_name in dependencies:
+            for dependency_name in mod_dependencies:
                 dependency = self.mods[dependency_name]
-                mod.dependencies.append(Dependency(mod=mod, dependency=dependency))
+                mod.dependencies.append(Dependency(dependency=dependency))
