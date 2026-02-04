@@ -46,6 +46,7 @@ class Mod(Base):
     repository: Mapped[str]
     latest_version: Mapped['Version'] = mapped_column(VersionType)
     plugin_file_name: Mapped[str]
+    artifact_name: Mapped[str]
 
     dependencies: Mapped[List['Dependency']] = relationship(
         "Dependency",
@@ -77,19 +78,9 @@ class Mod(Base):
     def plugin_file(self) -> Path:
         return self.game.plugins_directory / self.plugin_file_name
 
-    def resolve_dependencies(self) -> list[Dependency]:
-        all_dependencies = [dep for dep in self.dependencies]
-        index = 0
-        total = len(all_dependencies)
-        while index < total:
-            mod = all_dependencies[index].dependency
-            for dep in mod.dependencies:
-                if dep in all_dependencies:
-                    continue
-                all_dependencies.append(dep)
-                total += 1
-            index += 1
-        return all_dependencies
+    def get_download_url(self, version: Version | None = None) -> str:
+        version = version if version is not None else self.latest_version
+        return f"{self.repository}/releases/download/{version}/{self.artifact_name}"
 
 
 from blasmodcli.model.authorship import Authorship
