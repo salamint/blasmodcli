@@ -60,7 +60,7 @@ class Argument:
 
     def add_argument_to(self, parser: ArgumentParser):
         kwargs = {
-            "action": self.action,
+            "action": self.get_action(),
             "default": self.default,
             "help": self.help,
         }
