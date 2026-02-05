@@ -10,9 +10,10 @@ from blasmodcli.utils.cli.meta_handler import MetaCommandHandler
 class CommandHandler(ABC, metaclass=MetaCommandHandler):
 
     def __init__(self, context: CommandContext, game: Game, namespace: Namespace):
-        self.config = context.config
-        self.directories = context.directories
-        self.warehouse = context.warehouse
+        self.context = context
+        self.config = self.context.config
+        self.directories = self.context.directories
+        self.warehouse = self.context.warehouse
         self.cache = CacheDirectory(self.directories.cache)
         self.game = game
         for name, arg in self.arguments.items():
