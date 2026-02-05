@@ -3,12 +3,11 @@ from abc import ABCMeta
 from argparse import Namespace
 from typing import Any, Self
 
-from blasmodcli.exceptions import NothingToDoException, UserCancelException, CommandInMultipleGroupsError
+from blasmodcli.exceptions import CommandInMultipleGroupsError
 from blasmodcli.model import Game
 from blasmodcli.utils.cli.argument import Argument
 from blasmodcli.utils.cli.choices import Choices
 from blasmodcli.utils.cli.context import CommandContext
-from blasmodcli.view import Message
 
 Attributes = dict[str, Any]
 
@@ -81,21 +80,7 @@ class MetaCommandHandler(ABCMeta):
 
     def call_handler(cls, context: CommandContext, game: Game, namespace: Namespace) -> int:
         instance = cls(context, game, namespace)
-
-        try:
-            exit_code = instance.post_init()
-            if exit_code:
-                return exit_code
-            return asyncio.run(instance.handle())
-        except NothingToDoException as e:
-            Message.success(str(e))
-            return 0
-        except UserCancelException as e:
-            Message.error(str(e))
-            return 0
-        except Exception as e:
-            Message.error(f"{e.__class__.__name__}: {e}")
-            raise e
+        return asyncio.run(instance.proper_handle())
 
 
 def inherit_from_group(dct: Attributes, group: MetaCommandHandler):
