@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
 from argparse import Namespace
 
+from blasmodcli.exceptions import NothingToDoException, UserCancelException
 from blasmodcli.model import Game
 from blasmodcli.utils.caching import CacheDirectory
 from blasmodcli.utils.cli.context import CommandContext
 from blasmodcli.utils.cli.meta_handler import MetaCommandHandler
+from blasmodcli.view import Message
 
 
 class CommandHandler(ABC, metaclass=MetaCommandHandler):
@@ -38,8 +40,24 @@ class CommandHandler(ABC, metaclass=MetaCommandHandler):
         exit_code = controller.post_init()
         if exit_code:
             return exit_code
-        return await controller.handle()
+        return await controller.proper_handle()
 
     @abstractmethod
     async def handle(self) -> int:
         raise NotImplementedError
+
+    async def proper_handle(self):
+        try:
+            exit_code = self.post_init()
+            if exit_code:
+                return exit_code
+            return await self.handle()
+        except NothingToDoException as e:
+            Message.success(str(e))
+            return 0
+        except UserCancelException as e:
+            Message.error(str(e))
+            return 0
+        except Exception as e:
+            Message.error(f"{e.__class__.__name__}: {e}")
+            raise e
