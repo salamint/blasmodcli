@@ -32,6 +32,14 @@ class CommandHandler(ABC, metaclass=MetaCommandHandler):
     def post_init(self):
         pass
 
+    async def call(self, handler: MetaCommandHandler, **kwargs) -> int:
+        namespace = Namespace(**kwargs)
+        controller = handler(self.context, self.game, namespace)
+        exit_code = controller.post_init()
+        if exit_code:
+            return exit_code
+        return await controller.handle()
+
     @abstractmethod
     async def handle(self) -> int:
         raise NotImplementedError
