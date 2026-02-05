@@ -1,4 +1,4 @@
-from .confirmation import confirmation
+from .confirmation import accept_or_cancel, confirmation
 from .counter import Counter
 from .formatter import DateFormat, Formatter
 from .message import Message
