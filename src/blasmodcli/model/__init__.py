@@ -1,7 +1,7 @@
 from .base import Base
 from .authorship import Authorship
 from .dependency import Dependency
-from .file import File
+from .file import File, file_hash
 from .game import Game
 from .mod import Mod, ModState
 from .mod_installation import ModInstallation
