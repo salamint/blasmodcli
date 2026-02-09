@@ -16,6 +16,8 @@ class Game(Base):
     title: Mapped[str]
     developer: Mapped[str]
     publisher: Mapped[str]
+
+    executable: Mapped[str]
     linux_native: Mapped[bool]
     saves_directory: Mapped[Path] = mapped_column(PathType)
 
@@ -26,6 +28,10 @@ class Game(Base):
     @property
     def directory(self) -> Path:
         return Directories.get_steam_game_directory(self.title)
+
+    @property
+    def executable_path(self) -> Path:
+        return self.directory / self.executable
 
     @property
     def modding_directory(self) -> Path:
