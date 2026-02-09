@@ -2,6 +2,7 @@
 title = "Blasphemous 2"
 developer = "The Game Kitchen"
 publisher = "Team17"
+executable = "Blasphemous 2.exe"
 linux_native = false
 saves_directory = "~/.local/share/Steam/steamapps/compatdata/2114740/pfx/drive_c/users/steamuser/AppData/LocalLow/The Game Kitchen/Blasphemous 2"
 
