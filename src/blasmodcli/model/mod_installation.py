@@ -16,7 +16,11 @@ class ModInstallation(Base):
 
     version: Mapped['Version'] = mapped_column(VersionType)
     datetime: Mapped[datetime]
-    files: Mapped[List['File']] = relationship("File", back_populates="mod_installation")
+    files: Mapped[List['File']] = relationship(
+        "File",
+        back_populates="mod_installation",
+        cascade="all, delete-orphan"
+    )
 
     def is_broken(self) -> bool:
         for file in self.files:
