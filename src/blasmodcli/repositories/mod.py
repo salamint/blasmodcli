@@ -1,9 +1,10 @@
 from typing import Optional
 
-from sqlalchemy import or_
+from sqlalchemy import desc, or_
 
-from blasmodcli.model import ModSource, Mod, Game
+from blasmodcli.model import ModSource, Mod, Game, ModState
 from blasmodcli.repositories.repository import Repository
+from blasmodcli.utils.caching import CacheDirectory
 
 
 class ModRepository(Repository):
@@ -11,6 +12,23 @@ class ModRepository(Repository):
     def add_all(self, mods: list[Mod]):
         self.session.add_all(mods)
         self.session.commit()
+
+    def get_all(self, game: Game, cache_directory: CacheDirectory, state: ModState = ModState.NONE) -> list[type[Mod]]:
+        mods: list[type[Mod]] = []
+        results:list[type[Mod]] = self.session.query(Mod).filter(
+            Mod.game_id == game.id
+        ).order_by(
+            Mod.source_name,
+            desc(Mod.is_library),
+            Mod.name
+        ).all()
+        for mod in results:
+            is_none = state is ModState.NONE
+            is_cached = state is ModState.CACHED and cache_directory.has(mod)
+            is_installed = state is ModState.INSTALLED and mod.is_installed
+            if is_none or is_cached or is_installed:
+                mods.append(mod)
+        return mods
 
     def get_all_by_name(self, game: Game, name: str) -> list[type[Mod]]:
         return self.session.query(Mod).filter(
@@ -34,7 +52,7 @@ class ModRepository(Repository):
         ))
         if source is not None:
             query = query.filter(Mod.source_name == source)
-        return query.all()
+        return query.order_by(Mod.source_name, desc(Mod.is_library), Mod.name).all()
 
     def update_all(self, mods: list[Mod]):
         for mod in mods:
