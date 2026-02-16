@@ -1,3 +1,4 @@
+import re
 from datetime import date
 from enum import IntEnum
 from pathlib import Path
@@ -11,6 +12,9 @@ from blasmodcli.model.base import Base
 from blasmodcli.model.version import Version, VersionType
 
 
+ARCHIVE_FILENAME_PATTERN = re.compile(r"^(?P<game_id>[a-z]+)-(?P<source_name>[a-z]+)-(?P<mod_name>[a-z]+)-(?P<version>[0-9]+\.[0-9]+\.[0-9]+).zip$")
+
+
 class DateFormat:
     SIMPLE = "%Y-%m-%d"
     DETAILED = "%A, %e %B %Y"
@@ -20,7 +24,6 @@ class ModState(IntEnum):
     NONE = 0
     CACHED = 1
     INSTALLED = 2
-    ACTIVATED = 3
 
 
 class Mod(Base):
@@ -78,22 +81,29 @@ class Mod(Base):
     def plugin_file(self) -> Path:
         return self.game.plugins_directory / self.plugin_file_name
 
-    def is_activated(self) -> bool:
-        return self.plugin_file.is_file()
+    def get_latest_cached_version(self, cache_directory: Path) -> Version | None:
+        latest_cached = None
+        for entry in cache_directory.glob(f"{self.game_id}-{self.source_name}-{self.name}-*.zip"):
+            if not entry.is_file():
+                continue
+            match = ARCHIVE_FILENAME_PATTERN.match(entry.name)
+            if match is None:
+                continue
+            version = Version.from_tag(match.group("version"))
+            if latest_cached is None or version > latest_cached:
+                latest_cached = version
+        return latest_cached
 
     def is_cached(self, cache_directory: Path) -> bool:
-        archive = cache_directory / self.archive_name
-        return archive.is_file()
+        return self.get_latest_cached_version(cache_directory) is not None
 
     def is_installed(self) -> bool:
         return self.installation is not None
 
     def state(self, cache_directory: Path) -> ModState:
-        if self.is_activated():
-            return ModState.ACTIVATED
-        elif self.is_installed():
-            return ModState.INSTALLED
-        elif self.is_cached(cache_directory):
+        if self.is_cached(cache_directory):
+            if self.is_installed():
+                return ModState.INSTALLED
             return ModState.CACHED
         return ModState.NONE
 

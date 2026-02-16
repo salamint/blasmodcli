@@ -16,7 +16,13 @@ class ModInstallation(Base):
 
     version: Mapped['Version'] = mapped_column(VersionType)
     datetime: Mapped[datetime]
-    files: Mapped[List['File']] = relationship("File", back_populates="mod")
+    files: Mapped[List['File']] = relationship("File", back_populates="mod_installation")
+
+    def is_broken(self) -> bool:
+        for file in self.files:
+            if not file.exists():
+                return True
+        return False
 
 
 from blasmodcli.model.file import File

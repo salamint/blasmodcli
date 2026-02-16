@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -11,7 +13,14 @@ class File(Base):
     name: Mapped[str] = mapped_column(primary_key=True)
 
     mod_id: Mapped[str] = mapped_column(ForeignKey("mod_installation.mod_id"))
-    mod: Mapped['ModInstallation'] = relationship("ModInstallation", back_populates="files")
+    mod_installation: Mapped['ModInstallation'] = relationship("ModInstallation", back_populates="files")
+
+    @property
+    def path(self) -> Path:
+        return self.mod_installation.mod.game.modding_directory / self.directory / self.name
+
+    def exists(self) -> bool:
+        return self.path.is_file()
 
 
 from blasmodcli.model.mod_installation import ModInstallation
