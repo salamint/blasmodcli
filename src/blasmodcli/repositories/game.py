@@ -1,8 +1,6 @@
-from pathlib import Path
-
 from sqlalchemy.orm import Session
 
-from blasmodcli.model import Game, Mod, ModState
+from blasmodcli.model import Game
 from blasmodcli.repositories.modding_tools import ModdingToolsRepository
 from blasmodcli.repositories.repository import Repository
 
@@ -21,14 +19,6 @@ class GameRepository(Repository):
         for result in self.session.query(Game).all():
             names.append(result.id)
         return names
-
-    def get_mods_for(self, game: Game, cache_directory: Path, state: ModState = ModState.NONE) -> list[type[Mod]]:
-        mods: list[type[Mod]] = []
-        results = self.session.query(Mod).filter(Mod.game_id == game.id).all()
-        for mod in results:
-            if mod.state(cache_directory) >= state:
-                mods.append(mod)
-        return mods
 
     def update(self, game: Game):
         query = self.session.query(Game).filter(Game.id == game.id)
