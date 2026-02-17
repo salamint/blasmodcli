@@ -21,7 +21,7 @@ async def fetch_latest_version(session: ClientSession, repository: str) -> Versi
 
 
 def parse_authors(string: str) -> Generator[str]:
-    with_separators = string.replace(", ", AUTHORS_SEPARATOR).replace(", && ", AUTHORS_SEPARATOR)
+    with_separators = string.replace(", && ", AUTHORS_SEPARATOR).replace(", ", AUTHORS_SEPARATOR)
     for name in with_separators.split(AUTHORS_SEPARATOR):
         yield name.strip()
 
@@ -66,12 +66,13 @@ class OfficialModListParser(ModListParser):
                 raise TypeError(f"The value at index {i} is of type {type(data)} and not an object.")
             yield data
 
-    async def parse(self, data: Object) -> Mod:
+    async def parse_internal(self, data: Object) -> Mod:
         repository = f"https://github.com/{data['GithubAuthor']}/{data['GithubRepo']}"
         async with ClientSession() as session:
-            version = await fetch_latest_version(session, repository)
+            latest_version = await fetch_latest_version(session, repository)
         display_name = data["Name"]
         name = convert_to_name(display_name)
+        plugin_file_name = data["PluginFile"]
         mod = Mod(
             game_id=self.source.game_id,
             source_name=self.source.name,
@@ -81,9 +82,11 @@ class OfficialModListParser(ModListParser):
             is_library=(name == "modding-api" or name.endswith("-framework")),
             release_date=datetime.strptime(data["InitialReleaseDate"], DateFormat.SIMPLE).date(),
             repository=repository,
-            plugin_file_name=data["PluginFile"],
-            version=version
+            artifact_name=plugin_file_name.replace(".dll", ".zip"),
+            plugin_file_name=plugin_file_name,
+            latest_version=latest_version
         )
         for author in parse_authors(data["Author"]):
-            mod.authors.append(Authorship(mod=mod, name=author))
+            mod.authors.append(Authorship(name=author))
+        self.dependencies[mod.name] = [convert_to_name(dep) for dep in data.get("Dependencies", [])]
         return mod
