@@ -3,12 +3,11 @@ from abc import ABCMeta
 from argparse import Namespace
 from typing import Any, Self
 
-from blasmodcli.exceptions import NothingToDoException, UserCancelException, CommandInMultipleGroupsError
+from blasmodcli.exceptions import CommandInMultipleGroupsError
 from blasmodcli.model import Game
 from blasmodcli.utils.cli.argument import Argument
 from blasmodcli.utils.cli.choices import Choices
 from blasmodcli.utils.cli.context import CommandContext
-from blasmodcli.view import Message
 
 Attributes = dict[str, Any]
 
@@ -21,7 +20,7 @@ class MetaCommandHandler(ABCMeta):
     def get_group(metacls, name: str, bases: tuple[type]) -> Self | None:
         in_group = None
         for group_name, group in metacls._command_groups.items():
-            if group_name not in bases:
+            if group_name not in (base.__name__ for base in bases):
                 continue
             if in_group is not None:
                 group_names = list(metacls._command_groups.keys())
@@ -53,6 +52,10 @@ class MetaCommandHandler(ABCMeta):
             elif isinstance(value, Choices):
                 cls.choices[attr] = value
 
+        group_annotations = dct.get("__group_annotations__")
+        if group_annotations is not None:
+            group_annotations.update(cls.__annotations__)
+            cls.__annotations__ = group_annotations
         cls.add_annotations()
 
     @property
@@ -77,28 +80,11 @@ class MetaCommandHandler(ABCMeta):
 
     def call_handler(cls, context: CommandContext, game: Game, namespace: Namespace) -> int:
         instance = cls(context, game, namespace)
-
-        try:
-            exit_code = instance.post_init()
-            if exit_code:
-                return exit_code
-            return asyncio.run(instance.handle())
-        except NothingToDoException as e:
-            Message.success(str(e))
-            return 0
-        except UserCancelException as e:
-            Message.error(str(e))
-            return 0
-        except Exception as e:
-            Message.error(f"{e.__class__.__name__}: {e}")
-            raise e
+        return asyncio.run(instance.proper_handle())
 
 
 def inherit_from_group(dct: Attributes, group: MetaCommandHandler):
-    grp_annotations = group.__annotations__.copy()
-    grp_annotations.update(dct.get("__annotations__", {}))
-    dct["__annotations__"] = grp_annotations
-
+    dct["__group_annotations__"] = group.__annotations__.copy()
     for arg_name, arg_value in group.arguments.items():
         if arg_name not in dct.keys():
             dct[arg_name] = arg_value.copy()

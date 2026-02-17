@@ -1,26 +1,63 @@
 from abc import ABC, abstractmethod
 from argparse import Namespace
 
+from blasmodcli.exceptions import NothingToDoException, UserCancelException
 from blasmodcli.model import Game
+from blasmodcli.utils.caching import CacheDirectory
 from blasmodcli.utils.cli.context import CommandContext
 from blasmodcli.utils.cli.meta_handler import MetaCommandHandler
+from blasmodcli.view import Message
 
 
 class CommandHandler(ABC, metaclass=MetaCommandHandler):
 
     def __init__(self, context: CommandContext, game: Game, namespace: Namespace):
-        self.config = context.config
-        self.directories = context.directories
-        self.warehouse = context.warehouse
+        self.context = context
+        self.config = self.context.config
+        self.directories = self.context.directories
+        self.warehouse = self.context.warehouse
+        self.cache = CacheDirectory(self.directories.cache)
         self.game = game
-        for arg in self.arguments:
-            setattr(self, arg, getattr(namespace, arg))
-        for choice in self.choices:
-            setattr(self, choice, getattr(namespace, choice))
+        for name, arg in self.arguments.items():
+            try:
+                value = getattr(namespace, name)
+            except AttributeError:
+                value = arg.default
+            setattr(self, name, value)
+        for name, choice in self.choices.items():
+            try:
+                value = getattr(namespace, name)
+            except AttributeError:
+                value = choice.default
+            setattr(self, name, value)
 
     def post_init(self):
         pass
 
+    async def call(self, handler: MetaCommandHandler, **kwargs) -> int:
+        namespace = Namespace(**kwargs)
+        controller = handler(self.context, self.game, namespace)
+        exit_code = controller.post_init()
+        if exit_code:
+            return exit_code
+        return await controller.proper_handle()
+
     @abstractmethod
     async def handle(self) -> int:
         raise NotImplementedError
+
+    async def proper_handle(self):
+        try:
+            exit_code = self.post_init()
+            if exit_code:
+                return exit_code
+            return await self.handle()
+        except NothingToDoException as e:
+            Message.success(str(e))
+            return 0
+        except UserCancelException as e:
+            Message.error(str(e))
+            return 0
+        except Exception as e:
+            Message.error(f"{e.__class__.__name__}: {e}")
+            raise e
