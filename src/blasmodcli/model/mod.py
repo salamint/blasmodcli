@@ -1,4 +1,3 @@
-import re
 from datetime import date
 from enum import IntEnum
 from pathlib import Path
@@ -10,9 +9,6 @@ from sqlalchemy.orm import mapped_column
 
 from blasmodcli.model.base import Base
 from blasmodcli.model.version import Version, VersionType
-
-
-ARCHIVE_FILENAME_PATTERN = re.compile(r"^(?P<game_id>[a-z]+)-(?P<source_name>[a-z]+)-(?P<mod_name>[a-z]+)-(?P<version>[0-9]+\.[0-9]+\.[0-9]+).zip$")
 
 
 class DateFormat:
@@ -48,8 +44,9 @@ class Mod(Base):
     is_library: Mapped[bool]
     release_date: Mapped[date]
     repository: Mapped[str]
-    version: Mapped['Version'] = mapped_column(VersionType)
+    latest_version: Mapped['Version'] = mapped_column(VersionType)
     plugin_file_name: Mapped[str]
+    artifact_name: Mapped[str]
 
     dependencies: Mapped[List['Dependency']] = relationship(
         "Dependency",
@@ -70,8 +67,8 @@ class Mod(Base):
     installation: Mapped[Optional['ModInstallation']] = relationship("ModInstallation", back_populates="mod")
 
     @property
-    def archive_name(self) -> str:
-        return f"{self.game_id}-{self.source_name}-{self.name}-{self.version}.zip"
+    def is_installed(self) -> bool:
+        return self.installation is not None
 
     @property
     def full_name(self):
@@ -81,31 +78,9 @@ class Mod(Base):
     def plugin_file(self) -> Path:
         return self.game.plugins_directory / self.plugin_file_name
 
-    def get_latest_cached_version(self, cache_directory: Path) -> Version | None:
-        latest_cached = None
-        for entry in cache_directory.glob(f"{self.game_id}-{self.source_name}-{self.name}-*.zip"):
-            if not entry.is_file():
-                continue
-            match = ARCHIVE_FILENAME_PATTERN.match(entry.name)
-            if match is None:
-                continue
-            version = Version.from_tag(match.group("version"))
-            if latest_cached is None or version > latest_cached:
-                latest_cached = version
-        return latest_cached
-
-    def is_cached(self, cache_directory: Path) -> bool:
-        return self.get_latest_cached_version(cache_directory) is not None
-
-    def is_installed(self) -> bool:
-        return self.installation is not None
-
-    def state(self, cache_directory: Path) -> ModState:
-        if self.is_cached(cache_directory):
-            if self.is_installed():
-                return ModState.INSTALLED
-            return ModState.CACHED
-        return ModState.NONE
+    def get_download_url(self, version: Version | None = None) -> str:
+        version = version if version is not None else self.latest_version
+        return f"{self.repository}/releases/download/{version}/{self.artifact_name}"
 
 
 from blasmodcli.model.authorship import Authorship
