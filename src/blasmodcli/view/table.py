@@ -19,7 +19,8 @@ class TableRow:
 
 class Table:
 
-    def __init__(self, row_size: int = 0):
+    def __init__(self, title: str, row_size: int = 0):
+        self.title = title
         self.row_size = row_size
         self.dynamic = row_size <= 0
         self.rows: list[TableRow] = []
@@ -31,5 +32,7 @@ class Table:
         self.rows.append(TableRow(header, value, color))
 
     def print(self):
+        print(self.title)
+        print("=" * len(self.title))
         for row in self.rows:
             row.print(self.row_size)
