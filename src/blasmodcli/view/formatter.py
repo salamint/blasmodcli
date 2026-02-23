@@ -1,6 +1,5 @@
-from pathlib import Path
-
-from blasmodcli.model import Mod
+from blasmodcli.model import Mod, Version
+from blasmodcli.utils.caching import CacheDirectory
 
 from blasmodcli.utils.colors import Color
 from blasmodcli.view.table import Table
@@ -19,8 +18,9 @@ def format_bool(boolean: bool) -> str:
 
 class Formatter:
 
-    def __init__(self, mod: Mod):
+    def __init__(self, mod: Mod, version: Version | None = None):
         self.mod = mod
+        self.version = version
 
     def authors_list(self) -> str:
         return ", ".join(author.name for author in self.mod.authors)
@@ -39,11 +39,11 @@ class Formatter:
         authors = Color.fmt(self.authors_list(), Color.GREEN)
         print(f"{source}{name} {version} by {authors}\n    {self.mod.description}")
 
-    def print_info(self, cache_directory: Path):
-        is_cached = self.mod.is_cached(cache_directory)
-        is_installed = self.mod.is_installed()
+    def print_info(self, cache_directory: CacheDirectory):
+        is_cached = cache_directory.has(self.mod, self.version)
+        is_installed = self.mod.is_installed and self.mod.installation.version == self.version
 
-        table = Table()
+        table = Table(f"Displaying information about {self.mod.display_name} in version {self.version}")
         table.add_row("Game", f"{self.mod.game.title} ({self.mod.game_id})")
         table.add_row("Source", self.mod.source_name)
         table.add_row("Name", self.mod.name)
@@ -57,8 +57,6 @@ class Formatter:
         table.add_row("Latest version", self.mod.latest_version, Color.YELLOW)
         table.add_row("Cached", format_bool(is_cached))
         table.add_row("Installed", format_bool(is_installed))
-        if is_cached:
-            table.add_row("Cached version", self.mod.get_latest_cached_version(cache_directory), Color.YELLOW)
-        if is_installed:
+        if self.mod.is_installed:
             table.add_row("Installed version", self.mod.installation.version, Color.YELLOW)
         table.print()
