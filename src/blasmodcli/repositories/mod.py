@@ -1,8 +1,9 @@
 from typing import Optional
 
-from sqlalchemy import desc, or_
+from sqlalchemy import desc, or_, Row
+from sqlalchemy.sql.operators import and_
 
-from blasmodcli.model import ModSource, Mod, Game, ModState
+from blasmodcli.model import ModSource, Mod, Game, ModState, ModInstallation, Version
 from blasmodcli.repositories.repository import Repository
 from blasmodcli.utils.caching import CacheDirectory
 
@@ -42,6 +43,17 @@ class ModRepository(Repository):
             Mod.source_name == source.name,
             Mod.name == name
         ).one()
+
+    def get_upgrades(self, game: Game) -> list[type[Mod]]:
+        return self.session.query(Mod).filter(
+            and_(
+                and_(
+                    Mod.game_id == game.id,
+                    Mod.id == ModInstallation.mod_id,
+                    ),
+                Mod.latest_version != ModInstallation.version
+            )
+        ).all()
 
     def search(self, game: Game, source: Optional[str], pattern: str) -> list[type[Mod]]:
         query = self.session.query(Mod).filter(
