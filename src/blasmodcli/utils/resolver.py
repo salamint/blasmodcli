@@ -1,10 +1,5 @@
-from typing import Tuple
-
 from blasmodcli.exceptions.resolver import UnresolvableDependency
-from blasmodcli.model import Mod, Version, Dependency
-
-
-ModVersion = Tuple[Mod, Version]
+from blasmodcli.model import Mod, ModVersion, Version, Dependency
 
 
 class ModVersionRange:
@@ -42,7 +37,7 @@ class DependencyResolver:
 
     def get_latest_versions(self) -> list[ModVersion]:
         return [
-            (version_range.mod, version_range.most_recent_version)
+            ModVersion(version_range.mod, version_range.most_recent_version)
             for version_range in self.ranges.values()
         ]
 
