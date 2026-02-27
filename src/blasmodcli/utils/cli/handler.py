@@ -3,7 +3,7 @@ from argparse import Namespace
 
 from blasmodcli.exceptions import NothingToDoException, UserCancelException
 from blasmodcli.model import Game
-from blasmodcli.utils.caching import CacheDirectory
+from blasmodcli.repositories.filesystems.caching import CacheDirectory
 from blasmodcli.utils.cli.context import CommandContext
 from blasmodcli.utils.cli.meta_handler import MetaCommandHandler
 from blasmodcli.view import Message

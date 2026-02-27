@@ -2,7 +2,7 @@ from aiohttp import ClientSession
 from pathlib import Path
 
 from blasmodcli.model import Mod, Version
-from blasmodcli.utils.caching import CacheDirectory
+from blasmodcli.repositories.filesystems.caching import CacheDirectory
 from blasmodcli.utils.resolver import ModVersion
 
 from blasmodcli.utils.jobs.job import Job, JobList
