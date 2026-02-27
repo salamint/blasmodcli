@@ -1,3 +1,4 @@
+from dataclasses import dataclass, field, InitVar
 from datetime import date
 from enum import IntEnum
 from pathlib import Path
@@ -81,6 +82,26 @@ class Mod(Base):
     def get_download_url(self, version: Version | None = None) -> str:
         version = version if version is not None else self.latest_version
         return f"{self.repository}/releases/download/{version}/{self.artifact_name}"
+
+
+@dataclass
+class ModVersion:
+    mod: Mod
+    v: InitVar[Version | None]
+    version: Version = field(init=False)
+
+    def __post_init__(self, v: Version | None):
+        if v is None:
+            self.version = self.mod.latest_version
+        else:
+            self.version = v
+
+    def __getitem__(self, index: int) -> Mod | Version:
+        if index == 0:
+            return self.mod
+        elif index == 1:
+            return self.version
+        raise IndexError
 
 
 from blasmodcli.model.authorship import Authorship
