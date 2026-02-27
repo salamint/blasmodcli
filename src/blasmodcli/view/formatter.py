@@ -1,5 +1,5 @@
 from blasmodcli.model import Mod, Version
-from blasmodcli.utils.caching import CacheDirectory
+from blasmodcli.repositories.filesystems.caching import CacheDirectory
 
 from blasmodcli.utils.colors import Color
 from blasmodcli.view.table import Table
