@@ -65,7 +65,7 @@ class Mod(Base):
 
     authors: Mapped[List['Authorship']] = relationship("Authorship", back_populates="mod")
 
-    installation: Mapped[Optional['ModInstallation']] = relationship("ModInstallation", back_populates="mod")
+    installation: Mapped[Optional['Installation']] = relationship("ModInstallation", back_populates="mod")
 
     @property
     def is_installed(self) -> bool:
@@ -107,5 +107,5 @@ class ModVersion:
 from blasmodcli.model.authorship import Authorship
 from blasmodcli.model.dependency import Dependency
 from blasmodcli.model.game import Game
-from blasmodcli.model.mod_installation import ModInstallation
+from blasmodcli.model.installation import Installation
 from blasmodcli.model.mod_source import ModSource
