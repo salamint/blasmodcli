@@ -36,8 +36,8 @@ class Mod(Base):
     game_id: Mapped[str] = mapped_column(ForeignKey("game.id"))
     game: Mapped['Game'] = relationship("Game", back_populates="mods")
 
-    source_name: Mapped[str] = mapped_column(ForeignKey("mod_source.name"))
-    source: Mapped['ModSource'] = relationship("ModSource", back_populates="mods")
+    source_name: Mapped[str] = mapped_column(ForeignKey("source.name"))
+    source: Mapped['Source'] = relationship("Source", back_populates="mods")
 
     name: Mapped[str]
     display_name: Mapped[str]
@@ -108,4 +108,4 @@ from blasmodcli.model.authorship import Authorship
 from blasmodcli.model.dependency import Dependency
 from blasmodcli.model.game import Game
 from blasmodcli.model.installation import Installation
-from blasmodcli.model.mod_source import ModSource
+from blasmodcli.model.source import Source

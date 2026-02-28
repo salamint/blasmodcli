@@ -5,7 +5,7 @@ from aiohttp import ClientSession
 from typing import Generator
 
 from blasmodcli.exceptions.parsing import NameConversionError
-from blasmodcli.model import Authorship, Mod, ModSource, Version
+from blasmodcli.model import Authorship, Mod, Source, Version
 from blasmodcli.utils.parsing.parser import ModListParser, Object
 from blasmodcli.view import DateFormat
 
@@ -45,7 +45,7 @@ def convert_to_name(display_name: str) -> str:
 class OfficialModListParser(ModListParser):
     __parser_name__ = "official"
 
-    def __init__(self, source: ModSource):
+    def __init__(self, source: Source):
         super().__init__(source)
         self.all_data: list[Object] = []
 
