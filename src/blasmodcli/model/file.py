@@ -1,11 +1,6 @@
 from hashlib import file_digest
 from pathlib import Path
 
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from blasmodcli.model.base import Base
-
 
 CHUNK_SIZE = 4096
 FILE_HASH_ALGORITHM = "sha256"
@@ -17,18 +12,16 @@ def file_hash(file: Path) -> str:
     return digest.hexdigest()
 
 
-class File(Base):
-    __tablename__ = "file"
+class File:
 
-    file: Mapped[str] = mapped_column(primary_key=True)
-    hash: Mapped[str]
-
-    mod_id: Mapped[str] = mapped_column(ForeignKey("mod_installation.mod_id"))
-    mod_installation: Mapped['ModInstallation'] = relationship("ModInstallation", back_populates="files")
+    def __init__(self, installation: Installation, relpath: str, hash_digest: str | None = None):
+        self.installation = installation
+        self.relpath = relpath
+        self.hash = hash_digest if hash_digest is not None else file_hash(self.path)
 
     @property
     def path(self) -> Path:
-        return self.mod_installation.mod.game.modding_directory / self.file
+        return self.installation.mod.game.modding_directory / self.relpath
 
     def get_current_hash(self) -> str:
         return file_hash(self.path)
@@ -39,5 +32,8 @@ class File(Base):
     def has_changed(self) -> bool:
         return self.hash != self.get_current_hash()
 
+    def update_hash(self):
+        self.hash = file_hash(self.path)
 
-from blasmodcli.model.mod_installation import ModInstallation
+
+from blasmodcli.model.installation import Installation
