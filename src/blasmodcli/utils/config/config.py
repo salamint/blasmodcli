@@ -8,9 +8,9 @@ from blasmodcli.utils.config.sources import SourceConfiguration
 
 class Configuration:
 
-    def __init__(self, directory: Path, warehouse: TableRepositories):
+    def __init__(self, directory: Path, tables: TableRepositories):
         self.directory = Directories.require(directory)
-        self.warehouse = warehouse
+        self.tables = tables
         self.file = directory / "general.toml"
-        self.games = GameConfiguration(self.directory / "games", self.warehouse.games)
-        self.sources = SourceConfiguration(self.directory / "sources", self.warehouse.sources)
+        self.games = GameConfiguration(self.directory / "games", self.tables.games)
+        self.sources = SourceConfiguration(self.directory / "sources", self.tables.sources)
