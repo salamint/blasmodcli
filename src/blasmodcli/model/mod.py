@@ -73,10 +73,6 @@ class Mod(Base):
     def plugin_file(self) -> Path:
         return self.game.plugins_directory / self.plugin_file_name
 
-    def get_download_url(self, version: Version | None = None) -> str:
-        version = version if version is not None else self.latest_version
-        return f"{self.repository}/releases/download/{version}/{self.artifact_name}"
-
 
 @dataclass
 class ModVersion:
@@ -96,6 +92,12 @@ class ModVersion:
         elif index == 1:
             return self.version
         raise IndexError
+
+    def __str__(self) -> str:
+        return f"{self.mod.name}:{self.version}"
+
+    def get_download_url(self) -> str:
+        return f"{self.mod.repository}/releases/download/{self.version}/{self.mod.artifact_name}"
 
 
 from blasmodcli.model.authorship import Authorship
