@@ -3,7 +3,7 @@ from argparse import Namespace
 
 from blasmodcli.exceptions import NothingToDoException, UserCancelException
 from blasmodcli.model import Game
-from blasmodcli.repositories.filesystems.caching import CacheDirectory
+from blasmodcli.repositories.filesystems.cache import CacheRepository
 from blasmodcli.utils.cli.context import CommandContext
 from blasmodcli.utils.cli.meta_handler import MetaCommandHandler
 from blasmodcli.view import Message
@@ -15,8 +15,9 @@ class CommandHandler(ABC, metaclass=MetaCommandHandler):
         self.context = context
         self.config = self.context.config
         self.directories = self.context.directories
-        self.warehouse = self.context.warehouse
-        self.cache = CacheDirectory(self.directories.cache)
+        self.fs = self.context.fs
+        self.tables = self.context.tables
+        self.cache = CacheRepository(self.directories.cache)
         self.game = game
         for name, arg in self.arguments.items():
             try:
