@@ -2,7 +2,7 @@ from dataclasses import dataclass, field, InitVar
 from datetime import date
 from enum import IntEnum
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Tuple
 
 from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, relationship
@@ -65,12 +65,6 @@ class Mod(Base):
 
     authors: Mapped[List['Authorship']] = relationship("Authorship", back_populates="mod")
 
-    installation: Mapped[Optional['Installation']] = relationship("ModInstallation", back_populates="mod")
-
-    @property
-    def is_installed(self) -> bool:
-        return self.installation is not None
-
     @property
     def full_name(self):
         return f"{self.source.name}/{self.name}"
@@ -107,5 +101,4 @@ class ModVersion:
 from blasmodcli.model.authorship import Authorship
 from blasmodcli.model.dependency import Dependency
 from blasmodcli.model.game import Game
-from blasmodcli.model.installation import Installation
 from blasmodcli.model.source import Source
