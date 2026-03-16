@@ -1,4 +1,4 @@
-from blasmodcli.model import Mod, Version, ModVersion
+from blasmodcli.model import Mod, ModState, ModVersion, Version
 from blasmodcli.repositories import FileSystemRepositories
 
 from blasmodcli.utils.colors import Color
@@ -33,17 +33,40 @@ def format_mod_dependencies_list(mod: Mod) -> str:
 
 class Formatter:
 
-    def __init__(self, fs: FileSystemRepositories, local: bool):
+    def __init__(self, fs: FileSystemRepositories, focus: ModState = ModState.NONE):
         self.fs = fs
-        self.local = local
+        self.focus = focus
 
     def get_version(self, mod_version: ModVersion) -> str:
-        if self.local:
-            installation = self.fs.installations.get(mod_version)
-            if installation is None:
-                return "unknown"
-            return str(installation.version)
-        return str(mod_version.version)
+        match self.focus:
+            case ModState.NONE:
+                return str(mod_version.version)
+            case ModState.CACHED:
+                cached_version = self.fs.cache.get_latest_version(mod_version.mod)
+                if cached_version is None:
+                    return "unknown"
+                return str(cached_version)
+            case ModState.INSTALLED:
+                installation = self.fs.installations.get(mod_version)
+                if installation is None:
+                    return "unknown"
+                return str(installation.version)
+
+    def get_badge(self, mod, version: Version | None = None):
+        if self.focus is not ModState.INSTALLED:
+            installed_version = self.fs.installations.get_latest_version(mod)
+            if installed_version is not None:
+                if version is None or version == installed_version:
+                    return f" {Color.fmt("[installed]", Color.CYAN)}"
+                return f" {Color.fmt(f"[installed: {installed_version}]", Color.CYAN)}"
+        if self.focus is not ModState.CACHED:
+            cached_version = self.fs.cache.get_latest_version(mod)
+            if cached_version is not None:
+                if version is None or version == cached_version:
+                    return f" {Color.fmt("[cached]", Color.CYAN)}"
+                return f" {Color.fmt(f"[cached: {cached_version}]", Color.YELLOW)}"
+        return ""
+
 
     def get_full_name(self, mod: Mod, version: Version | None = None) -> str:
         source = Color.fmt(f"{mod.source_name}", Color.MAGENTA)
@@ -51,13 +74,20 @@ class Formatter:
         version = Color.fmt(self.get_version(ModVersion(mod, version)), Color.YELLOW)
         return f"{source}/{name}:{version}"
 
+    def get_installation(self, mod: Mod, version: Version | None = None):
+        return self.fs.installations.get(ModVersion(mod, version))
+
+    def is_cached(self, mod: Mod, version: Version | None = None) -> bool:
+        return self.fs.cache.has(mod, version)
+
     def summary(self, mod: Mod, version: Version | None = None):
+        full_name = self.get_full_name(mod, version)
         authors = Color.fmt(format_mod_authors_list(mod), Color.GREEN)
-        print(f"{self.get_full_name(mod, version)} by {authors}\n    {mod.description}")
+        badge = self.get_badge(mod, version)
+        print(f"{full_name} by {authors}{badge}\n    {mod.description}")
 
     def print_info(self, mod: Mod, version: Version | None = None):
-        is_cached = self.fs.cache.has(mod, version)
-        installation = self.fs.installations.get(ModVersion(mod, version))
+        installation = self.get_installation(mod, version)
         is_installed = installation is not None
 
         table = Table(f"Displaying information about {mod.display_name} in version {version}")
@@ -75,7 +105,7 @@ class Formatter:
         table.add_row("Release date", mod.release_date.strftime(DateFormat.DETAILED))
         table.add_row("Latest version", mod.latest_version, Color.YELLOW)
         table.add_separator()
-        table.add_row("Cached", format_bool(is_cached))
+        table.add_row("Cached", format_bool(self.is_cached(mod, version)))
         table.add_row("Installed", format_bool(is_installed))
         if is_installed:
             table.add_row("Installed version", installation.version, Color.YELLOW)
