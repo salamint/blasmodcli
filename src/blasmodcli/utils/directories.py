@@ -1,6 +1,10 @@
 import os
 from pathlib import Path
 
+from blasmodcli.utils.message import Message
+
+CUSTOM_PATH_ENV_VAR = "STEAM_DATA_PATH"
+
 
 class Directories:
 
@@ -9,16 +13,20 @@ class Directories:
     XDG_DATA = Path.home() / ".local" / "share"
     XDG_STATE = Path.home() / ".local" / "state"
 
+    TMP_STORAGE = Path("/tmp")
+
     @staticmethod
     def get_steam_data() -> Path:
-        default = Directories.XDG_DATA / "Steam"
-        env_var = os.environ.get("STEAM_DATA_PATH")
+        default = Directories.XDG_DATA.resolve() / "Steam"
+        env_var = os.environ.get(CUSTOM_PATH_ENV_VAR)
         if env_var is None:
             return default
 
-        steam_data_path = Path(env_var)
+        steam_data_path = Path(env_var).resolve()
         if steam_data_path.is_dir():
             return steam_data_path
+
+        Message.warning(f"The directory specified by the {CUSTOM_PATH_ENV_VAR} environment variable does not exist, using the default {default} directory instead.")
         return default
 
     @staticmethod
@@ -41,3 +49,4 @@ class Directories:
         self.config = Directories.XDG_CONFIG / exec_name
         self.data = Directories.XDG_DATA / exec_name
         self.state = Directories.XDG_STATE / exec_name
+        self.temp = Directories.TMP_STORAGE / exec_name
