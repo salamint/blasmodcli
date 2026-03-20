@@ -1,6 +1,6 @@
 from blasmodcli.exceptions import UserCancelException
 from blasmodcli.utils import Color
-from blasmodcli.view.message import Message
+from blasmodcli.utils.message import Message
 
 
 def confirmation(message: str, default: bool = True):

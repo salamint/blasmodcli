@@ -1,5 +1,5 @@
 from blasmodcli.utils import Color
-from blasmodcli.view.message import Message
+from blasmodcli.utils.message import Message
 
 
 class Counter:

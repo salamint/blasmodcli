@@ -1,7 +1,6 @@
 from typing import TextIO
 
 from blasmodcli.utils import Color
-from blasmodcli.view.progress import Progress
 
 
 class Message:
@@ -10,21 +9,6 @@ class Message:
     def print(color: 'Color', message: str, nl: bool = True, stream: TextIO | None = None):
         arrow = Color.fmt("=>", color)
         print(f"{arrow} {message}", end="\n" if nl else "", file=stream, flush=True)
-
-    @staticmethod
-    def ask(message: str, default: bool = False) -> bool:
-        Message.print(Color.YELLOW, message, nl=False)
-        if default:
-            answer = input(" [Y/n] ")
-            return len(answer) == 0 or answer.lower() == "y"
-        else:
-            answer = input(" [y/N] ")
-            return answer.lower() == "y"
-
-    @staticmethod
-    def progress(message: str):
-        Message.print(Color.YELLOW, f"{message}...", nl=False)
-        return Progress()
 
     @staticmethod
     def debug(message: str):
