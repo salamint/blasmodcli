@@ -17,6 +17,7 @@ class Game(Base):
     developer: Mapped[str]
     publisher: Mapped[str]
 
+    steamapp_id: Mapped[int]
     executable: Mapped[str]
     linux_native: Mapped[bool]
     saves_directory: Mapped[Path] = mapped_column(PathType)
