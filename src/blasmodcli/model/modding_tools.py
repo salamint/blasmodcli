@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -17,6 +17,18 @@ class ModdingTools(Base):
     url: Mapped[str]
     author: Mapped[str]
     script_filename: Mapped[Optional[str]]
+
+    dependencies: Mapped[List['ModdingToolsDependency']] = relationship("ModdingToolsDependency", back_populates="modding_tools")
+
+
+class ModdingToolsDependency(Base):
+    __tablename__ = "modding_tools_dependency"
+
+    game_id: Mapped[str] = mapped_column(ForeignKey("modding_tools.game_id"), primary_key=True)
+    modding_tools: Mapped['ModdingTools'] = relationship("ModdingTools", back_populates="dependencies")
+
+    name: Mapped[str] = mapped_column(primary_key=True)
+    display_name: Mapped[str]
 
 
     @property
