@@ -19,11 +19,11 @@ class Progress:
         else:
             self.failure()
 
-    def failure(self):
-        self.status("FAILURE", Color.RED)
+    def failure(self, message: str | None = None):
+        self.status("FAILURE" if message is None else message, Color.RED)
 
-    def success(self):
-        self.status("SUCCESS", Color.GREEN)
+    def success(self, message: str | None = None):
+        self.status("SUCCESS" if message is None else message, Color.GREEN)
 
     def version(self, version: 'Version'):
         self.status(str(version), Color.YELLOW)
