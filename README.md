@@ -1,8 +1,24 @@
 # blasmodcli
 
-This is a command line interface to help manage mods for Blasphemous and Blasphemous II on Linux.
-There is already a mod installer, but at the time being it is only available for Windows.
-In the meantime, this script should cover basic use cases, to automate the process of installing and managing mods.
+This is a command line interface to help manage mods
+for [Blasphemous](https://store.steampowered.com/app/774361/Blasphemous/) and [Blasphemous II]() on Linux. There is
+already a mod installer, but at the time being it is only available for Windows. In the meantime, this script should
+cover basic use cases, to automate the process of installing and managing mods.
+
+> [!WARNING]
+> Keep in mind that at the moment this installer does not account for configuration files, so make sure to back any important configuration before continuing.
+
+## Contents
+
+1. [Installation](#installation)
+   1. [Requirements](#requirements)
+2. [How-to](#how-to)
+   1. [First configuration](#first-configuration)
+   2. [Looking for mods](#looking-for-mods)
+   3. [Installing mods](#installing-mods)
+   4. [Managing mods](#managing-mods)
+3. [Commands](#commands)
+4. [Paths](#paths)
 
 ## Installation
 
@@ -19,84 +35,11 @@ Dependencies are automatically installed inside the virtual environment generate
 - [Python](https://www.python.org/) >= 3.9
 - the [venv](https://docs.python.org/3/library/venv.html) Python module
 
-## Features
+If you are not using a Python virtual environment like intended, you need to manually install the following Python packages:
+- `aiohttp >= 3.13`
+- `SQLAlchemy >= 2.0`
 
-For a game:
-- List all mods available, mods that are installed, and mods that are activated.
-- Search mods (can be improved).
-- Configure the modding tools (i.e. install them), only available for Blasphemous at the moment.
-- Backup your saves.
-- Update the mod database.
-- Clear the modding directory (deletes every activated mod).
-
-For a mod:
-- Install a mod.
-- Activate a mod.
-- Deactivate a mod (can be improved).
-
-### TODO list
-List of features that needs to be implemented.
-- [ ] Add the option to configure the modding tools for Blasphemous II.
-- [ ] Add a handler to uninstall mods.
-- [ ] Add a handler to upgrade one or every installed mods to their latest version.
-- [ ] Deactivate the mods that depend on a mod that has been deactivated/uninstalled.
-- [ ] Add the option to deactivate mods recursively (deactivate a mod and its dependencies).
-- [ ] Adding mod packs to easily swap mods
-- [ ] Have mods profiles to easily switch mod configurations
-
-## Usage
-
-```shell
-# For Blasphemous (the first game)
-blasmodcli --help
-blasmodcli <action> [args]
-blasmodcli <action> --help
-# For Blasphemous II (the sequel)
-blas2modcli --help
-blas2modcli <action> [args]
-blas2modcli <action> --help
-```
-
-## Commands
-
-| Command      | Implemented | Level    | Parameters                                                               | Description                                                                                                            |
-|--------------|-------------|----------|--------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
-| `info`       | ✅/✅         | Internal | `mod_name`                                                               | Displays information about a mod using its name.                                                                       |
-| `list`       | ✅/✅         | Internal | `[--installed] [--activated]`                                            | Shows the list of every mod available (or installed, or activated).                                                    |
-| `search`     | ✅/✅         | Internal | `[terms ...]`                                                            | Lists every mod whose name, author or description contains the given string of text.                                   |
-| `update`     | ✅/✅         | Internal |                                                                          | Updates the mod database and fetches the latest mod version, allowing to detect upgradable mods.                       |
-| `backup`     | ✅/✅         | Game     | `[--destination DESTINATION]`                                            | Backs up your saves into an archive and exports them.                                                                  |
-| `clear`      | ✅/✅         | Game     | `[--force]`                                                              | Deletes the 'Modding' directory that contains all activated mod. In other words, deactivate all mods in a cleaner way. |
-| `configure`  | ✅/❌         | Game     |                                                                          | Downloads and extract the modding tools for Blasphemous inside the game's folder.                                      |
-| `activate`   | ✅/✅         | Mod      | `[--reactivate REACTIVATE] [--not-recursive] mod_name`                   | Extracts the contents of the mod inside the Modding folder, thus activating it.                                        |
-| `deactivate` | ✅/✅         | Mod      | `[--not-recursive] mod_name`                                             | Removes the dynamic library file associated with the mod inside the Modding folder, thus deactivating it.              |
-| `install`    | ✅/✅         | Mod      | `[--force] [--do-not-activate] mod_name`                                 | Downloads a mod and does not activate it immediately.                                                                  |
-| `uninstall`  | ❌/❌         | Mod      | `[--unused-dependencies-action {nothing,deactivate,uninstall}] mod_name` | Deletes the mod and all of its files from the game's folder.                                                           |
-| `upgrade`    | ❌/❌         | Mod      |                                                                          | Upgrades all mods (or the given one) to their latest version.                                                          |
-
-### Details
-
-The **Implemented** column shows whether the command is implemented for
-Blasphemous 1 or Blasphemous 2 respectively. If the command is not implemented,
-it will have no effect.
-
-The **Level** column indicates at which level does the command operate. The
-**Internal** level means the command only reads and/or writes files that are
-managed by the tool itself (cache files, mod database etc.). The **Game** level
-means the command has to or can interact with the game's files, to install the
-modding tools for example. The **Mod** level means the command only affects mod
-files.
-
-The **Parameter** column only shows the list of parameters with their names. If
-the parameter is enclosed between brackets like thise: `[--parameter]`, it means
-it is optional. If it is not however, it means it is required by the command. To
-know more the usage of each parameter, please consult the help for the
-corresponding command.
-
-The **Description** column offers a short description of what the command does,
-taken from the `--help` message.
-
-## Examples
+## How-to
 
 Here are some common usages of this tool used as examples of what you could be
 using this tool for.
@@ -111,24 +54,60 @@ blasmodcli configure
 
 ### Looking for mods
 ```sh
-# Note: Since blasmodcli and blas2modcli are each tied to their own game,
-# you might want to update both. That cannot be done with the same command.
-# You will have to type and run `blas2modcli update` separately.
 blasmodcli update
 blasmodcli list
 blasmodcli search quality of life
 ```
 
+> [!NOTE]
+> Since `blasmodcli` and `blas2modcli` are each tied to their own game, you might want to update both. That cannot be done with the same command.
+> You will have to type and run `blas2modcli update` separately.
+
 ### Installing mods
 ```sh
-blasmodcli install "Better Saves"
-blasmodcli install "Damage Numbers Reborn"
+blasmodcli install randomizer
+# Do not ask for confirmation when downloading and installing mods
+blasmodcli install -y better-saves
 ```
 
 ### Managing mods
 ```sh
-# These aren't very realistic examples
-blasmodcli deactivate "Damage Numbers Reborn"
-blasmodcli uninstall "Better Saves"
-blasmodcli activate "Damage Numbers Reborn"
+# Uninstall a mod from the game's files
+blasmodcli uninstall randomizer
+# Remove a mod from the cache directory
+blasmodcli remove better-saves
+# Download a mod from a specific source and place it in the cache directory
+blasmodcli download main/better-saves
+# Download (if needed) and install a mod in a specific version
+blasmodcli install randomizer:3.0.0
 ```
+
+## Commands
+
+> [!NOTE]
+> This part of the documentation will get more detailed later.
+> Otherwise, I recommend checking what each command does using the `--help` flag.
+
+| Command     | Operates on | Description                                                                          |
+|-------------|-------------|--------------------------------------------------------------------------------------|
+| `backup`    | Game        | Backs up your saves into an archive and exports them.                                |
+| `configure` | Game        | Downloads and extract the modding tools for Blasphemous inside the game's folder.    |
+| `launch`    | Game        | Starts the game with the given Steam launch parameters.                              |
+| `list`      | Game        | Shows the list of every mod available (or installed, or activated).                  |
+| `search`    | Game        | Lists every mod whose name, author or description contains the given string of text. |
+| `update`    | Game        | Updates the mod database.                                                            |
+| `download`  | Mod         | Downloads the archive for a given mod.                                               |
+| `info`      | Mod         | Displays information for a given mod.                                                |
+| `install`   | Mod         | Downloads a mod and extract it in the game's modding directory.                      |
+| `remove`    | Mod         | Remove a mod archive from the cache.                                                 |
+| `uninstall` | Mod         | Delete every file a mod added from the modding directory.                            |
+| `upgrade`   | Mod         | Upgrades all mods (or the specified ones) to their latest version.                   |
+
+## Paths
+
+| Directory                    | Usage                           |
+|------------------------------|---------------------------------|
+| `~/.config/blacmodcli/`      | Tool configuration files.       |
+| `~/.local/share/blacmodcli/` | Database and profile files.     |
+| `~/.cache/blasmodcli/mods/`  | Mod archive download firectory. |
+| `/tmp/blasmodcli/mods/`      | Launch preferences.             |
