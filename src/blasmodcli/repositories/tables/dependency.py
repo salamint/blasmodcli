@@ -1,8 +1,13 @@
+from sqlalchemy.orm import Session
+
 from blasmodcli.model import Dependency
-from blasmodcli.repositories.repository import Repository
+from blasmodcli.repositories.tables.table import TableRepository
 
 
-class DependencyRepository(Repository):
+class DependencyRepository(TableRepository):
+
+    def __init__(self, session: Session):
+        super().__init__(session, Dependency)
 
     def update_all(self, dependencies: list[Dependency]):
         for dependency in dependencies:

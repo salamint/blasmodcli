@@ -1,35 +1,21 @@
 from typing import Optional
 
-from sqlalchemy import desc, or_, Row
+from sqlalchemy import desc, or_
+from sqlalchemy.orm import Session
 from sqlalchemy.sql.operators import and_
 
-from blasmodcli.model import ModSource, Mod, Game, ModState, ModInstallation, Version
-from blasmodcli.repositories.repository import Repository
-from blasmodcli.utils.caching import CacheDirectory
+from blasmodcli.model import Source, Mod, Game, Installation
+from blasmodcli.repositories.tables.table import TableRepository
 
 
-class ModRepository(Repository):
+class ModRepository(TableRepository):
+
+    def __init__(self, session: Session):
+        super().__init__(session, Mod)
 
     def add_all(self, mods: list[Mod]):
         self.session.add_all(mods)
         self.session.commit()
-
-    def get_all(self, game: Game, cache_directory: CacheDirectory, state: ModState = ModState.NONE) -> list[type[Mod]]:
-        mods: list[type[Mod]] = []
-        results:list[type[Mod]] = self.session.query(Mod).filter(
-            Mod.game_id == game.id
-        ).order_by(
-            Mod.source_name,
-            desc(Mod.is_library),
-            Mod.name
-        ).all()
-        for mod in results:
-            is_none = state is ModState.NONE
-            is_cached = state is ModState.CACHED and cache_directory.has(mod)
-            is_installed = state is ModState.INSTALLED and mod.is_installed
-            if is_none or is_cached or is_installed:
-                mods.append(mod)
-        return mods
 
     def get_all_by_name(self, game: Game, name: str) -> list[type[Mod]]:
         return self.session.query(Mod).filter(
@@ -37,7 +23,7 @@ class ModRepository(Repository):
             Mod.name == name
         ).all()
 
-    def get_by_name(self, source: ModSource, name: str) -> type[Mod]:
+    def get_by_name(self, source: Source, name: str) -> type[Mod]:
         return self.session.query(Mod).filter(
             Mod.game_id == source.game_id,
             Mod.source_name == source.name,
@@ -49,9 +35,9 @@ class ModRepository(Repository):
             and_(
                 and_(
                     Mod.game_id == game.id,
-                    Mod.id == ModInstallation.mod_id,
+                    Mod.id == Installation.mod_id,
                     ),
-                Mod.latest_version != ModInstallation.version
+                Mod.latest_version != Installation.version
             )
         ).all()
 
