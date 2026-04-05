@@ -1,10 +1,10 @@
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session
 
-from blasmodcli.repositories.dependency import DependencyRepository
-from blasmodcli.repositories.game import GameRepository
-from blasmodcli.repositories.mod import ModRepository
-from blasmodcli.repositories.mod_source import ModSourceRepository
+from .dependency import DependencyRepository
+from .game import GameRepository
+from .mod import ModRepository
+from .source import ModSourceRepository
 
 
 class TableRepositories:
