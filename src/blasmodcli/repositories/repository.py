@@ -1,7 +1,12 @@
-from sqlalchemy.orm import Session
+from abc import ABC, abstractmethod
+from typing import Generic, TypeVar
 
 
-class Repository:
+T = TypeVar("T")
 
-    def __init__(self, session: Session):
-        self.session = session
+
+class IRepository(ABC, Generic[T]):
+
+    @abstractmethod
+    def get_all(self) -> list[T]:
+        pass
