@@ -1,5 +1,6 @@
 [blas1]
 title = "Blasphemous"
+steamapp_id = 774361
 developer = "The Game Kitchen"
 publisher = "Team17"
 executable = "Blasphemous.x86_64"
@@ -9,5 +10,5 @@ saves_directory = "~/.config/unity3d/TheGameKitchen/Blasphemous/Savegames"
 [blas1.tools]
 mod_loader = "BepInEx"
 format = "official"
-url = "https://github.com/BrandenEK/Blasphemous.ModdingTools"
+url = "https://github.com/BrandenEK/Blasphemous.ModdingTools/raw/main/modding-tools-linux.zip"
 author = "Damocles"

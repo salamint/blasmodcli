@@ -6,5 +6,5 @@ from .game import Game
 from .mod import Mod, ModState, ModVersion
 from .installation import Installation
 from .source import Source
-from .modding_tools import ModdingTools
+from .modding_tools import ModdingTools, ModdingToolsDependency
 from .version import Version

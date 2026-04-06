@@ -1,5 +1,6 @@
 [blas2]
 title = "Blasphemous 2"
+steamapp_id = 2114740
 developer = "The Game Kitchen"
 publisher = "Team17"
 executable = "Blasphemous 2.exe"
@@ -9,5 +10,8 @@ saves_directory = "~/.local/share/Steam/steamapps/compatdata/2114740/pfx/drive_c
 [blas2.tools]
 mod_loader = "MelonLoader"
 format = "official"
-url = "https://github.com/BrandenEK/BlasII.ModdingTools"
+url = "https://github.com/BrandenEK/BlasII.ModdingTools/raw/main/modding-tools-windows.zip"
 author = "Damocles"
+
+[blas2.tools.dependencies]
+dotnetdesktop6 = ".NET Desktop Runtime 6.0"
