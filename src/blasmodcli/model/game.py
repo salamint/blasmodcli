@@ -23,7 +23,8 @@ class Game(Base):
 
     modding_tools: Mapped['ModdingTools'] = relationship("ModdingTools", back_populates="game", cascade="all, delete-orphan")
 
-    sources: Mapped[List['ModSource']] = relationship("ModSource", back_populates="game")
+    sources: Mapped[List['Source']] = relationship("Source", back_populates="game")
+    mods: Mapped[List['Mod']] = relationship("Mod", back_populates="game")
 
     @property
     def directory(self) -> Path:
@@ -42,5 +43,6 @@ class Game(Base):
         return self.modding_directory / "plugins"
 
 
-from blasmodcli.model.mod_source import ModSource
+from blasmodcli.model.source import Source
+from blasmodcli.model.mod import Mod
 from blasmodcli.model.modding_tools import ModdingTools

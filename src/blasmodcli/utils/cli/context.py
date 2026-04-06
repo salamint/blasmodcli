@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from blasmodcli.repositories import Warehouse
+from blasmodcli.repositories import FileSystemRepositories, TableRepositories
 from blasmodcli.utils import Directories
 from blasmodcli.utils.config import Configuration
 
@@ -9,4 +9,5 @@ from blasmodcli.utils.config import Configuration
 class CommandContext:
     config: Configuration
     directories: Directories
-    warehouse: Warehouse
+    fs: FileSystemRepositories
+    tables: TableRepositories

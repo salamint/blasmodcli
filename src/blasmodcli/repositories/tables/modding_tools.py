@@ -1,8 +1,13 @@
+from sqlalchemy.orm import Session
+
 from blasmodcli.model import ModdingTools
-from blasmodcli.repositories.repository import Repository
+from blasmodcli.repositories.tables.table import TableRepository
 
 
-class ModdingToolsRepository(Repository):
+class ModdingToolsRepository(TableRepository):
+
+    def __init__(self, session: Session):
+        super().__init__(session, ModdingTools)
 
     def update(self, modding_tools: ModdingTools):
         query = self.session.query(ModdingTools).filter(ModdingTools.game_id == modding_tools.game_id)

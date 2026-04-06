@@ -1,7 +1,8 @@
+from dataclasses import dataclass, field, InitVar
 from datetime import date
 from enum import IntEnum
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Tuple
 
 from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, relationship
@@ -33,10 +34,10 @@ class Mod(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
     game_id: Mapped[str] = mapped_column(ForeignKey("game.id"))
-    game: Mapped['Game'] = relationship("Game")
+    game: Mapped['Game'] = relationship("Game", back_populates="mods")
 
-    source_name: Mapped[str] = mapped_column(ForeignKey("mod_source.name"))
-    source: Mapped['ModSource'] = relationship("ModSource", back_populates="mods")
+    source_name: Mapped[str] = mapped_column(ForeignKey("source.name"))
+    source: Mapped['Source'] = relationship("Source", back_populates="mods")
 
     name: Mapped[str]
     display_name: Mapped[str]
@@ -64,12 +65,6 @@ class Mod(Base):
 
     authors: Mapped[List['Authorship']] = relationship("Authorship", back_populates="mod")
 
-    installation: Mapped[Optional['ModInstallation']] = relationship("ModInstallation", back_populates="mod")
-
-    @property
-    def is_installed(self) -> bool:
-        return self.installation is not None
-
     @property
     def full_name(self):
         return f"{self.source.name}/{self.name}"
@@ -83,8 +78,27 @@ class Mod(Base):
         return f"{self.repository}/releases/download/{version}/{self.artifact_name}"
 
 
+@dataclass
+class ModVersion:
+    mod: Mod
+    v: InitVar[Version | None] = None
+    version: Version = field(init=False)
+
+    def __post_init__(self, v: Version | None):
+        if v is None:
+            self.version = self.mod.latest_version
+        else:
+            self.version = v
+
+    def __getitem__(self, index: int) -> Mod | Version:
+        if index == 0:
+            return self.mod
+        elif index == 1:
+            return self.version
+        raise IndexError
+
+
 from blasmodcli.model.authorship import Authorship
 from blasmodcli.model.dependency import Dependency
 from blasmodcli.model.game import Game
-from blasmodcli.model.mod_installation import ModInstallation
-from blasmodcli.model.mod_source import ModSource
+from blasmodcli.model.source import Source

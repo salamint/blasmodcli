@@ -1,14 +1,14 @@
 from sqlalchemy.orm import Session
 
 from blasmodcli.model import Game
-from blasmodcli.repositories.modding_tools import ModdingToolsRepository
-from blasmodcli.repositories.repository import Repository
+from blasmodcli.repositories.tables.modding_tools import ModdingToolsRepository
+from blasmodcli.repositories.tables.table import TableRepository
 
 
-class GameRepository(Repository):
+class GameRepository(TableRepository):
 
     def __init__(self, session: Session):
-        super().__init__(session)
+        super().__init__(session, Game)
         self.modding_tools = ModdingToolsRepository(session)
 
     def get_by_id(self, id: str) -> type[Game]:

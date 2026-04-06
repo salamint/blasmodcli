@@ -6,8 +6,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from blasmodcli.model.base import Base
 
 
-class ModSource(Base):
-    __tablename__ = "mod_source"
+class Source(Base):
+    __tablename__ = "source"
     __table_args__ = (
         UniqueConstraint("game_id", "url", name="unique_source_url_per_game"),
     )
