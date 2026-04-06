@@ -34,7 +34,7 @@ class Mod(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
     game_id: Mapped[str] = mapped_column(ForeignKey("game.id"))
-    game: Mapped['Game'] = relationship("Game")
+    game: Mapped['Game'] = relationship("Game", back_populates="mods")
 
     source_name: Mapped[str] = mapped_column(ForeignKey("mod_source.name"))
     source: Mapped['ModSource'] = relationship("ModSource", back_populates="mods")
@@ -87,7 +87,7 @@ class Mod(Base):
 @dataclass
 class ModVersion:
     mod: Mod
-    v: InitVar[Version | None]
+    v: InitVar[Version | None] = None
     version: Version = field(init=False)
 
     def __post_init__(self, v: Version | None):
