@@ -22,6 +22,6 @@ class Counter:
     def print(self):
         color = Color.GREEN if self.finished else Color.YELLOW
         print(end="\r")
-        Message.print(Color.YELLOW, f"{self.message}... {Color.fmt(self, color)}", nl=False)
+        Message.print(color, f"{self.message}... {Color.fmt(self, color)}", nl=False)
         if self.finished:
             print(flush=True)
