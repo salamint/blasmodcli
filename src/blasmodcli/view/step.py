@@ -1,6 +1,6 @@
 from typing import Callable
 
-from blasmodcli.view import Message
+from blasmodcli.utils import Message
 
 
 def step(message: str) -> Callable[[Callable], Callable]:

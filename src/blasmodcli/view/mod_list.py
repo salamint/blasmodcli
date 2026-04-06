@@ -4,7 +4,7 @@ from shutil import get_terminal_size
 from blasmodcli.model import Mod, Version
 from blasmodcli.utils import Color
 from blasmodcli.utils.resolver import ModVersion
-from blasmodcli.view.message import Message
+from blasmodcli.utils.message import Message
 
 ESCAPE_SEQUENCE_REGEX = re.compile(r"(\033\[([0-9]+(;[0-9]+)?)m)")
 OFFSET = 8
