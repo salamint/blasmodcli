@@ -1,6 +1,6 @@
 [project]
 name = "blasmodcli"
-version = "0.1.0"
+version = "1.0.0-alpha.1"
 authors = [ { name = "salamint", email = "salamint@proton.me" } ]
 description = "A tool to simplify the installation and management of mods for Blasphemous and Blasphemous II on Linux."
 readme = "README.md"
