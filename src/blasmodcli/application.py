@@ -1,18 +1,21 @@
 from argparse import ArgumentParser
+from logging import FileHandler, StreamHandler, Formatter, DEBUG, WARNING
+import sys
 
 from sqlalchemy import create_engine
 
 from blasmodcli.controller import *
 from blasmodcli.model import Base
-
 from blasmodcli.utils import APP_NAME, logger, Directories
 from blasmodcli.utils.cli import CommandContext, CommandLineInterface
+from blasmodcli.utils.message import MessageFormatter
 
 
 class Application:
 
     def __init__(self):
         self.directories = Directories(APP_NAME)
+        self.init_logger()
         self.database_file = Directories.require(self.directories.data / "database.sqlite3", parent=True)
         self.engine = create_engine(f"sqlite:///{self.database_file.absolute()}")
         self.context = CommandContext(self.directories, self.engine)
@@ -28,6 +31,22 @@ class Application:
         # Finally create the CLI
         self.cli = CommandLineInterface(self.context)
         self.add_command_handlers()
+
+    def init_logger(self):
+        file_formatter = Formatter("[%(asctime)s][%(levelname)s][%(name)s]: %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+        file_handler = FileHandler(Directories.require(self.directories.state) / "main.log")
+        file_handler.setLevel(DEBUG)
+        file_handler.setFormatter(file_formatter)
+        logger.addHandler(file_handler)
+
+        stream_formatter = MessageFormatter()
+        stream_handler = StreamHandler(sys.stdout)
+        stream_handler.setLevel(WARNING)
+        stream_handler.setFormatter(stream_formatter)
+        logger.addHandler(stream_handler)
+
+        logger.setLevel(DEBUG)
+        logger.info("============================ [ NEW SESSION ] ============================")
 
     def add_parser_arguments(self):
         self.parser.add_argument(
