@@ -39,26 +39,25 @@ class MessageFormatter(Formatter):
 class Message:
 
     @staticmethod
-    def print(color: 'Color', message: str, nl: bool = True, stream: TextIO | None = None):
-        arrow = color.fmt("=>")
-        print(f"{arrow} {message}", end="\n" if nl else "", file=stream, flush=True)
+    def print(arrow: 'ArrowStyle', color: 'Color', message: str, nl: bool = True, stream: TextIO | None = None):
+        print(arrow.fmt(message, color), end="\n" if nl else "", file=stream, flush=True)
 
     @staticmethod
     def debug(message: str):
-        return Message.print(Color.MAGENTA, message)
+        return Message.print(ArrowStyle.THICK, Color.MAGENTA, message)
 
     @staticmethod
     def success(message: str):
-        return Message.print(Color.GREEN, message)
+        return Message.print(ArrowStyle.THICK, Color.GREEN, message)
 
     @staticmethod
     def info(message: str):
-        return Message.print(Color.BLUE, message)
+        return Message.print(ArrowStyle.THIN, Color.BLUE, message)
 
     @staticmethod
     def warning(message: str):
-        return Message.print(Color.YELLOW, message)
+        return Message.print(ArrowStyle.THIN, Color.YELLOW, message)
 
     @staticmethod
     def error(message: str):
-        return Message.print(Color.RED, message)
+        return Message.print(ArrowStyle.THICK, Color.RED, message)
