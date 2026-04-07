@@ -108,7 +108,7 @@ blasmodcli install randomizer:3.0.0
 
 | Directory                    | Usage                           |
 |------------------------------|---------------------------------|
-| `~/.config/blacmodcli/`      | Tool configuration files.       |
-| `~/.local/share/blacmodcli/` | Database and profile files.     |
+| `~/.config/blasmodcli/`      | Tool configuration files.       |
+| `~/.local/share/blasmodcli/` | Database and profile files.     |
 | `~/.cache/blasmodcli/mods/`  | Mod archive download firectory. |
 | `/tmp/blasmodcli/mods/`      | Launch preferences.             |
