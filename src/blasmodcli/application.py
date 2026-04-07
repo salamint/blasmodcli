@@ -5,10 +5,8 @@ from sqlalchemy import create_engine
 from blasmodcli.controller import *
 from blasmodcli.model import Base
 
-from blasmodcli.utils import Directories
+from blasmodcli.utils import APP_NAME, logger, Directories
 from blasmodcli.utils.cli import CommandContext, CommandLineInterface
-
-APP_NAME = "blasmodcli"
 
 
 class Application:
