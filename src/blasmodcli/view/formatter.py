@@ -15,12 +15,13 @@ class DateFormat:
 
 def format_bool(boolean: bool) -> str:
     if boolean:
-        return Color.fmt("Yes", Color.GREEN)
-    return Color.fmt("No", Color.RED)
+        return Color.GREEN.fmt("Yes")
+    return Color.RED.fmt("No")
 
 
 def format_mod_name(mod: Mod, display_name: bool = True) -> str:
-    return Color.fmt(mod.display_name if display_name else mod.name, Color.BLUE if mod.is_library else Color.WHITE)
+    color = Color.BLUE if mod.is_library else Color.WHITE
+    return color.fmt(mod.display_name if display_name else mod.name)
 
 
 def format_mod_authors_list(mod: Mod) -> str:
@@ -57,21 +58,21 @@ class Formatter:
             installed_version = self.fs.installations.get_latest_version(mod)
             if installed_version is not None:
                 if version is None or version == installed_version:
-                    return f" {Color.fmt("[installed]", Color.CYAN)}"
-                return f" {Color.fmt(f"[installed: {installed_version}]", Color.CYAN)}"
+                    return f" {Color.CYAN.fmt("[installed]")}"
+                return f" {Color.CYAN.fmt(f"[installed: {installed_version}]")}"
         if self.focus is not ModState.CACHED:
             cached_version = self.fs.cache.get_latest_version(mod)
             if cached_version is not None:
                 if version is None or version == cached_version:
-                    return f" {Color.fmt("[cached]", Color.CYAN)}"
-                return f" {Color.fmt(f"[cached: {cached_version}]", Color.YELLOW)}"
+                    return f" {Color.CYAN.fmt("[cached]")}"
+                return f" {Color.YELLOW.fmt(f"[cached: {cached_version}]")}"
         return ""
 
 
     def get_full_name(self, mod: Mod, version: Version | None = None) -> str:
-        source = Color.fmt(f"{mod.source_name}", Color.MAGENTA)
+        source = Color.MAGENTA.fmt(f"{mod.source_name}")
         name = format_mod_name(mod, display_name=False)
-        version = Color.fmt(self.get_version(ModVersion(mod, version)), Color.YELLOW)
+        version = Color.YELLOW.fmt(self.get_version(ModVersion(mod, version)))
         return f"{source}/{name}:{version}"
 
     def get_installation(self, mod: Mod, version: Version | None = None):
@@ -82,7 +83,7 @@ class Formatter:
 
     def summary(self, mod: Mod, version: Version | None = None):
         full_name = self.get_full_name(mod, version)
-        authors = Color.fmt(format_mod_authors_list(mod), Color.GREEN)
+        authors = Color.GREEN.fmt(format_mod_authors_list(mod))
         badge = self.get_badge(mod, version)
         print(f"{full_name} by {authors}{badge}\n    {mod.description}")
 

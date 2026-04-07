@@ -5,6 +5,7 @@ from blasmodcli.model import Mod, Version
 from blasmodcli.utils import Color
 from blasmodcli.utils.resolver import ModVersion
 from blasmodcli.utils.message import Message
+from blasmodcli.view.formatter import format_mod_name
 
 ESCAPE_SEQUENCE_REGEX = re.compile(r"(\033\[([0-9]+(;[0-9]+)?)m)")
 OFFSET = 8
@@ -24,8 +25,7 @@ class ModList:
 
     def add_mod(self, mod: Mod, version: Version | None = None):
         version = version if version is not None else mod.latest_version
-        mod_name = Color.fmt(mod.name, Color.BLUE if mod.is_library else Color.WHITE)
-        self.add_string(f"{mod_name}-{Color.fmt(version, Color.YELLOW)}")
+        self.add_string(f"{format_mod_name(mod)}-{Color.YELLOW.fmt(version)}")
 
     def add_mods(self, mod_versions: list[ModVersion]):
         for mod, version in mod_versions:

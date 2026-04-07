@@ -73,9 +73,9 @@ class Update(GameCommandGroup):
         if number_of_upgrades > 0:
             Message.info(f"{number_of_upgrades} new upgrades are available:")
             for mod, version in upgrades:
-                prefix = f"  {Color.fmt("-", Color.GREEN)}"
-                current_version = Color.fmt(version, Color.YELLOW)
-                newest_version = Color.fmt(mod.latest_version, Color.YELLOW)
+                prefix = f"  {Color.GREEN.fmt("-")}"
+                current_version = Color.YELLOW.fmt(version)
+                newest_version = Color.YELLOW.fmt(mod.latest_version)
                 print(f"{prefix} {format_mod_name(mod)} {current_version} -> {newest_version}")
         else:
             Message.info("Nothing to show.")
