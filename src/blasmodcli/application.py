@@ -47,6 +47,7 @@ class Application:
     def add_command_handlers(self):
         # Game commands
         self.cli.add_handler(Backup)
+        self.cli.add_handler(CD)
         self.cli.add_handler(Configure)
         self.cli.add_handler(Launch)
         self.cli.add_handler(List)
