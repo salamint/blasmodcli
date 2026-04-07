@@ -75,7 +75,7 @@ class Launch(GameCommandGroup):
 
     def launch_modded_native(self) -> int:
         command = self.command.copy()
-        command.insert(0, self.game.modding_tools.script)
+        command.insert(0, str(self.game.modding_tools.script.resolve()))
         process = run(command)
         return process.returncode
 

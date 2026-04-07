@@ -11,8 +11,8 @@ class GameRepository(TableRepository):
         super().__init__(session, Game)
         self.modding_tools = ModdingToolsRepository(session)
 
-    def get_by_id(self, id: str) -> type[Game]:
-        return self.session.query(Game).filter(Game.id == id).one()
+    def get_by_id(self, game_id: str) -> type[Game]:
+        return self.session.query(Game).filter(Game.id == game_id).one()
 
     def get_all_ids(self) -> list[str]:
         names = []

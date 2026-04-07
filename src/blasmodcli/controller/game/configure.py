@@ -34,7 +34,6 @@ class Configure(GameCommandGroup):
     destination: Path
     dotnet_desktop_runtime: Path
     download_url: str
-    script: str
 
     def post_init(self):
         if self.game.modding_tools is None:
@@ -44,7 +43,6 @@ class Configure(GameCommandGroup):
         logger.debug(f"The modding tools archive destination is '{self.archive}'.")
         self.destination = self.game.directory.resolve()
         self.download_url = self.game.modding_tools.url
-        self.script = self.game.modding_tools.script_filename if self.game.modding_tools.script_filename is not None else "run_bepinex.sh"
 
     @step("Downloading the modding tools...")
     async def download_modding_tools(self):
@@ -63,8 +61,7 @@ class Configure(GameCommandGroup):
 
     @step("Setting the execution permissions on the script file...")
     def setting_permissions(self):
-        script = self.destination / self.script
-        script.chmod(0o755)
+        self.game.modding_tools.script.chmod(0o755)
         Message.success("Permissions correctly set!")
 
     # Methods for games not native to Linux

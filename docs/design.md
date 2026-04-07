@@ -11,7 +11,7 @@ terminal for the user to see.
 The `controller` package contains the handlers for each command, it requests data from the model, operates on it, then
 display information to the user using the `view`.
 
-I chosed to rewrite this application and follow an MVC architecture because it reminded me of a web application.
+I chose to rewrite this application and follow an MVC architecture because it reminded me of a web application.
 Commands can be seen as routes, and therefore each command has its corresponding controller. This also allows to export
 the model in the future for another rewrite or the making of a similar application in another language, using other
 frameworks etc.

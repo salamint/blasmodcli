@@ -2,7 +2,7 @@ from dataclasses import dataclass, field, InitVar
 from datetime import date
 from enum import IntEnum
 from pathlib import Path
-from typing import List, Tuple
+from typing import List
 
 from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, relationship
