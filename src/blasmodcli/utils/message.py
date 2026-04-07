@@ -1,6 +1,11 @@
+from logging import getLogger
 from typing import TextIO
 
 from blasmodcli.utils import Color
+
+APP_NAME = "blasmodcli"
+
+logger = getLogger(APP_NAME)
 
 
 class Message:
