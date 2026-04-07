@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Optional, List
 
 from sqlalchemy import ForeignKey
@@ -20,6 +21,11 @@ class ModdingTools(Base):
 
     dependencies: Mapped[List['ModdingToolsDependency']] = relationship("ModdingToolsDependency", back_populates="modding_tools")
 
+    @property
+    def script(self) -> Path:
+        script_filename = self.script_filename if self.script_filename is not None else "run_bepinex.sh"
+        return self.game.directory / script_filename
+
 
 class ModdingToolsDependency(Base):
     __tablename__ = "modding_tools_dependency"
@@ -29,11 +35,5 @@ class ModdingToolsDependency(Base):
 
     name: Mapped[str] = mapped_column(primary_key=True)
     display_name: Mapped[str]
-
-
-    @property
-    def script(self):
-        script_filename = self.script_filename if self.script_filename is not None else "run_bepinex.sh"
-        return self.game.directory / script_filename
 
 from blasmodcli.model.game import Game
