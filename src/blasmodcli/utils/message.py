@@ -12,7 +12,7 @@ class Message:
 
     @staticmethod
     def print(color: 'Color', message: str, nl: bool = True, stream: TextIO | None = None):
-        arrow = Color.fmt("=>", color)
+        arrow = color.fmt("=>")
         print(f"{arrow} {message}", end="\n" if nl else "", file=stream, flush=True)
 
     @staticmethod

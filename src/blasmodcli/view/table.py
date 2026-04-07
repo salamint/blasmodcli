@@ -10,10 +10,10 @@ class TableRow:
     color: Color | None
 
     def print(self, row_size: int):
-        formatted_header = Color.fmt(self.header, Color.WHITE)
+        formatted_header = Color.WHITE.fmt(self.header)
         if len(self.header) < row_size:
             formatted_header += " " * (row_size - len(self.header))
-        formatted_value = self.value if self.color is None else Color.fmt(self.value, self.color)
+        formatted_value = self.value if self.color is None else self.color.fmt(self.value)
         print(formatted_header, formatted_value)
 
 

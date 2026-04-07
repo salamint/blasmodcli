@@ -11,9 +11,9 @@ from blasmodcli.view import format_mod_name, accept_or_cancel, NumberedList
 def print_upgrade_list(upgrades: list[Installation]):
     Message.info(f"{len(upgrades)} new upgrades are available:")
     for installation in upgrades:
-        prefix = f"  {Color.fmt("-", Color.GREEN)}"
-        current_version = Color.fmt(installation.version, Color.YELLOW)
-        newest_version = Color.fmt(installation.mod.latest_version, Color.YELLOW)
+        prefix = f"  {Color.GREEN.fmt("-")}"
+        current_version = Color.YELLOW.fmt(installation.version)
+        newest_version = Color.YELLOW.fmt(installation.mod.latest_version)
         print(f"{prefix} {format_mod_name(installation.mod)} {current_version} -> {newest_version}")
 
 

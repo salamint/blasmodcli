@@ -10,7 +10,7 @@ class Progress:
     def status(self, status: str, color: 'Color'):
         if self.__status is not None:
             return
-        print(f" {Color.fmt(status, color)}", flush=True)
+        print(f" {color.fmt(status)}", flush=True)
         self.__status = status
 
     def boolean(self, boolean: bool):

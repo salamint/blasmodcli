@@ -12,6 +12,5 @@ class Color(StrEnum):
     CYAN = "\033[1;36m"
     WHITE = "\033[1;37m"
 
-    @staticmethod
-    def fmt(obj, color: 'Color') -> str:
-        return f"{color}{obj}{Color.RESET}"
+    def fmt(self, obj) -> str:
+        return f"{self}{obj}{Color.RESET}"

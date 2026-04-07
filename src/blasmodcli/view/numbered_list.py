@@ -9,7 +9,7 @@ class NumberedList:
         self.total = total
 
     def get_prefix(self):
-        return Color.fmt(f"[{self.counter}/{self.total}]", Color.GREEN)
+        return Color.GREEN.fmt(f"[{self.counter}/{self.total}]")
 
     def add_item(self, message: str):
         print(f"{self.get_prefix()} {message}")
