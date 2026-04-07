@@ -91,6 +91,7 @@ blasmodcli install randomizer:3.0.0
 | Command     | Operates on | Description                                                                          |
 |-------------|-------------|--------------------------------------------------------------------------------------|
 | `backup`    | Game        | Backs up your saves into an archive and exports them.                                |
+| `cd`        | Game        | Opens a sub-shell inside the game's directory.                                       |
 | `configure` | Game        | Downloads and extract the modding tools for Blasphemous inside the game's folder.    |
 | `launch`    | Game        | Starts the game with the given Steam launch parameters.                              |
 | `list`      | Game        | Shows the list of every mod available (or installed, or activated).                  |
