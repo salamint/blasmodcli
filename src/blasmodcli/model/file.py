@@ -14,7 +14,7 @@ def file_hash(file: Path) -> str:
 
 class File:
 
-    def __init__(self, installation: Installation, relpath: str, hash_digest: str | None = None):
+    def __init__(self, installation: 'Installation', relpath: str, hash_digest: str | None = None):
         self.installation = installation
         self.relpath = relpath
         self.hash = hash_digest if hash_digest is not None else file_hash(self.path)

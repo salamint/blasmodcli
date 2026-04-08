@@ -4,7 +4,7 @@ from pathlib import Path
 
 class Installation:
 
-    def __init__(self, file: Path, mod_version: ModVersion):
+    def __init__(self, file: Path, mod_version: 'ModVersion'):
         self.file = file
         self.mod_version = mod_version
         self.files: list['File'] = []
