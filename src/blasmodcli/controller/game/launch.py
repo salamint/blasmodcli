@@ -4,7 +4,7 @@ from subprocess import run
 
 from blasmodcli.controller.game.group import GameCommandGroup
 from blasmodcli.exceptions import UserCancelException
-from blasmodcli.utils import Message, Directories
+from blasmodcli.utils import Directories, logger
 from blasmodcli.utils.cli import Argument
 from blasmodcli.view import ChoiceGUI
 
@@ -26,7 +26,7 @@ class Launch(GameCommandGroup):
         try:
             gui = ChoiceGUI(self.game.title)
         except ImportError:
-            Message.error("The TCL/TK library is not installed.")
+            logger.error("The TCL/TK library is not installed.")
             return False
 
         gui.mainloop()
@@ -34,20 +34,20 @@ class Launch(GameCommandGroup):
             raise UserCancelException("No choice selected.")
 
         if gui.remember_until_next_reboot.get():
-            Message.debug("Remembering until next reboot.")
+            logger.debug("Remembering until next reboot.")
             self.save_choice(gui.launch_modded)
         return gui.launch_modded
 
     def get_choice_start_modded(self) -> bool:
         if self.bypass_remembered_choice:
-            Message.debug("Bypassing remembered choice.")
+            logger.debug("Bypassing remembered choice.")
             return self.ask_user_if_launch_modded()
 
         remembered_choice = self.load_choice()
         if remembered_choice is None:
             return self.ask_user_if_launch_modded()
 
-        Message.info(f"Using remembered choice: {remembered_choice}")
+        logger.info(f"Using remembered choice: {remembered_choice}")
         return remembered_choice
 
     def launch_using_steam_browser_protocol(self):
@@ -60,7 +60,7 @@ class Launch(GameCommandGroup):
         if args:
             url += f"//{' '.join(args)}"
 
-        Message.debug(f"Opening '{url}' using Steam's browser protocol...")
+        logger.debug(f"Opening '{url}' using Steam's browser protocol...")
         process = run(["xdg-open", url])
         return process.returncode
 
@@ -104,8 +104,8 @@ class Launch(GameCommandGroup):
             return self.launch_using_steam_browser_protocol()
 
         if self.choice and self.get_choice_start_modded():
-            Message.debug(f"Starting {self.game.title} modded.")
+            logger.debug(f"Starting {self.game.title} modded.")
             return self.launch_modded()
 
-        Message.debug(f"Starting {self.game.title} vanilla.")
+        logger.debug(f"Starting {self.game.title} vanilla.")
         return self.launch_vanilla()

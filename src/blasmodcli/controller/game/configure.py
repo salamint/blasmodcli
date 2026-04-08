@@ -7,7 +7,7 @@ from aiohttp import ClientSession
 
 from blasmodcli.controller.game.group import GameCommandGroup
 from blasmodcli.exceptions import NothingToDoException
-from blasmodcli.utils import Message
+from blasmodcli.utils import Message, logger
 from blasmodcli.utils.cli import Argument
 from blasmodcli.utils.jobs import download
 from blasmodcli.view import step, accept_or_cancel, NumberedList
@@ -17,10 +17,10 @@ def get_protontricks_executable() -> str | None:
     flatpak_exec = "com.github.Matoking.protontricks"
     fallback_exec = "protontricks"
     if which(flatpak_exec) is not None:
-        Message.debug("Using the flatpak version of protontricks")
+        logger.debug("Using the flatpak version of protontricks")
         return flatpak_exec
     elif which(fallback_exec) is not None:
-        Message.debug("Using the fallback version of protontricks")
+        logger.debug("Using the fallback version of protontricks")
         return fallback_exec
     return None
 
@@ -41,7 +41,7 @@ class Configure(GameCommandGroup):
             raise NothingToDoException("There is nothing to configure for this game, or it is not supported.")
 
         self.archive = self.directories.cache.resolve() / f"{self.game.id}-modding-tools.zip"
-        Message.debug(f"The modding tools archive destination is '{self.archive}'.")
+        logger.debug(f"The modding tools archive destination is '{self.archive}'.")
         self.destination = self.game.directory.resolve()
         self.download_url = self.game.modding_tools.url
         self.script = self.game.modding_tools.script_filename if self.game.modding_tools.script_filename is not None else "run_bepinex.sh"
@@ -97,7 +97,7 @@ class Configure(GameCommandGroup):
                 progress.success()
             else:
                 progress.failure()
-                Message.error(process.stderr.decode())
+                logger.error(process.stderr.decode())
         Message.success("Successfully installed all modding tools dependencies!")
 
     async def handle(self) -> int:

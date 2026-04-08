@@ -2,7 +2,7 @@ from subprocess import run
 import os
 
 from blasmodcli.controller.game.group import GameCommandGroup
-from blasmodcli.utils import Message
+from blasmodcli.utils import logger
 
 
 class CD(GameCommandGroup):
@@ -11,6 +11,6 @@ class CD(GameCommandGroup):
     async def handle(self) -> int:
         shell = os.getenv("SHELL")
         if shell is None or len(shell) == 0:
-            Message.error("The user's $SHELL variable is empty or unset.")
+            logger.error("The user's $SHELL variable is empty or unset.")
         run(shell, cwd=self.game.directory)
         return 0

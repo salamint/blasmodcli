@@ -1,6 +1,6 @@
 from blasmodcli.controller.mod.group import ModCommandGroup
 from blasmodcli.exceptions import NothingToDoException
-from blasmodcli.utils import Message
+from blasmodcli.utils import Message, logger
 from blasmodcli.utils.cli import Argument
 from blasmodcli.utils.resolver import ModVersion
 from blasmodcli.view import step, NumberedList, accept_or_cancel
@@ -28,7 +28,7 @@ class Uninstall(ModCommandGroup):
             ignore = False
             for dep in mod.required_by:
                 if dep.mod not in mods and dep.mod.is_installed:
-                    Message.debug(f"Dependency {mod.display_name} ignored because required by {dep.mod.display_name} which is installed")
+                    logger.debug(f"Dependency {mod.display_name} ignored because required by {dep.mod.display_name} which is installed")
                     ignore = True
             if not ignore:
                 filtered.append(ModVersion(mod, version))
