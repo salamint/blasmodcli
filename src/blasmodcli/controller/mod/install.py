@@ -4,7 +4,7 @@ from blasmodcli.controller.mod.download import Download
 from blasmodcli.controller.mod.group import ModCommandGroup
 from blasmodcli.exceptions import NothingToDoException
 from blasmodcli.model import File, Installation, ModVersion
-from blasmodcli.utils import Message
+from blasmodcli.utils import Message, logger
 from blasmodcli.utils.cli import Argument
 from blasmodcli.view import step, NumberedList, accept_or_cancel
 
@@ -100,7 +100,7 @@ class Install(ModCommandGroup):
 
         failed = self.install_mods()
         if failed:
-            Message.error(f"Failed to install {failed} mods.")
+            logger.error(f"Failed to install {failed} mods.")
             return failed
         Message.success(f"Successfully installed {number_of_mods} mods!")
         return 0

@@ -6,7 +6,7 @@ from sqlalchemy.exc import NoResultFound
 from blasmodcli.exceptions import UnknownModError, MultipleModsError, UnresolvableDependency
 from blasmodcli.model import Version
 from blasmodcli.model.mod import Mod
-from blasmodcli.utils import Message
+from blasmodcli.utils import Message, logger
 from blasmodcli.utils.cli import CommandHandler, Argument
 from blasmodcli.utils.resolver import DependencyResolver, ModVersion
 from blasmodcli.view import step, ModList
@@ -75,7 +75,7 @@ class ModCommandGroup(CommandHandler, ABC):
         try:
             resolver.resolve()
         except UnresolvableDependency as e:
-            Message.error(str(e))
+            logger.error(str(e))
             return 1
         self.mod_versions.extend(resolver.get_latest_versions())
         return 0

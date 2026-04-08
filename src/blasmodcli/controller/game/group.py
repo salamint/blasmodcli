@@ -1,7 +1,7 @@
 from abc import ABC
 
 from blasmodcli.model import ModState, ModVersion
-from blasmodcli.utils import Message
+from blasmodcli.utils import logger
 from blasmodcli.utils.cli import CommandHandler
 
 
@@ -11,7 +11,7 @@ class GameCommandGroup(CommandHandler, ABC):
 
     def get_mods(self, state: ModState = ModState.NONE) -> list[ModVersion]:
         precision = f" that are {state.name.lower()}" if state is not ModState.NONE else ""
-        Message.debug(f"Querying all mods for {self.game.title}{precision}...")
+        logger.debug(f"Querying all mods for {self.game.title}{precision}...")
         mod_versions = []
         match state:
             case ModState.NONE:

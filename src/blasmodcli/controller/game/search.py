@@ -1,7 +1,7 @@
 from typing import Optional
 
 from blasmodcli.controller.game.group import GameCommandGroup
-from blasmodcli.utils import Message
+from blasmodcli.utils import logger
 from blasmodcli.utils.cli import Argument
 from blasmodcli.view import Formatter
 
@@ -16,7 +16,7 @@ class Search(GameCommandGroup):
 
     async def handle(self) -> int:
         pattern = WILDCARD + WILDCARD.join(self.terms) + WILDCARD
-        Message.debug(f"Searching for mod names or descriptions matching: {pattern}")
+        logger.debug(f"Searching for mod names or descriptions matching: {pattern}")
         formatter = Formatter(self.fs)
         for mod in self.tables.mods.search(self.game, self.source, pattern):
             formatter.summary(mod)
