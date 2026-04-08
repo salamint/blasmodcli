@@ -17,6 +17,7 @@ cover basic use cases, to automate the process of installing and managing mods.
    2. [Looking for mods](#looking-for-mods)
    3. [Installing mods](#installing-mods)
    4. [Managing mods](#managing-mods)
+   5. [Launch modded from Steam](#launch-modded-from-steam)
 3. [Commands](#commands)
 4. [Paths](#paths)
 
@@ -81,6 +82,30 @@ blasmodcli download main/better-saves
 # Download (if needed) and install a mod in a specific version
 blasmodcli install randomizer:3.0.0
 ```
+
+### Launch modded from steam
+
+For Blasphemous put this as the steam launch options:
+```sh
+blasmodcli launch -c -- %command%
+```
+
+For Blasphemous II put this as the steam launch options:
+```sh
+blas2modcli launch -c -- %command%
+```
+
+This will ask you if you prefer to start the game modded or vanilla everytime, but you can save an option until the next
+time your computer is rebooted.
+
+### Launch from the terminal
+
+You can start the game using this command:
+```sh
+blasmodcli launch
+```
+but this will just start the game using Steam's protocol, so it will only start the game modded if you followed the step
+above.
 
 ## Commands
 
