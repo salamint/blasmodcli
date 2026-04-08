@@ -1,6 +1,6 @@
 from pathlib import Path
 from os import environ
-from subprocess import run
+from subprocess import run, list2cmdline
 
 from blasmodcli.controller.game.group import GameCommandGroup
 from blasmodcli.exceptions import UserCancelException
@@ -64,9 +64,19 @@ class Launch(GameCommandGroup):
         process = run(["xdg-open", url])
         return process.returncode
 
-    def launch_vanilla(self) -> int:
-        process = run(self.command)
+    def launch_command(self, command: list[str], env: dict[str, str] | None = None) -> int:
+        logger.debug(f"Launching {self.game.title} with command: {list2cmdline(command)}")
+        cmd_env = environ.copy()
+        if env is not None:
+            cmd_env.update(env)
+        process = run(command, env=cmd_env, capture_output=True)
+        logger.info(process.stdout.decode())
+        if process.returncode:
+            logger.error(f"An error occurred during the execution of the game: {process.stderr.decode()}")
         return process.returncode
+
+    def launch_vanilla(self) -> int:
+        return self.launch_command(self.command)
 
     def launch_modded(self) -> int:
         if self.game.linux_native:
@@ -74,16 +84,10 @@ class Launch(GameCommandGroup):
         return self.launch_modded_through_proton()
 
     def launch_modded_native(self) -> int:
-        command = self.command.copy()
-        command.insert(0, str(self.game.modding_tools.script.resolve()))
-        process = run(command)
-        return process.returncode
+        return self.launch_command([str(self.game.modding_tools.script.resolve())])
 
     def launch_modded_through_proton(self) -> int:
-        env = environ.copy()
-        env["WINEDLLOVERRIDES"] = "version=n,b"
-        process = run(self.command, env=env)
-        return process.returncode
+        return self.launch_command(self.command, env={"WINEDLLOVERRIDES": "version=n,b"})
 
     def load_choice(self) -> bool | None:
         if not self.tmp_file.is_file():
