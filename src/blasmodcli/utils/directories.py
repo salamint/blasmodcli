@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from blasmodcli.utils.message import Message
+from blasmodcli.utils.message import logger
 
 CUSTOM_PATH_ENV_VAR = "STEAM_DATA_PATH"
 
@@ -26,7 +26,7 @@ class Directories:
         if steam_data_path.is_dir():
             return steam_data_path
 
-        Message.warning(f"The directory specified by the {CUSTOM_PATH_ENV_VAR} environment variable does not exist, using the default {default} directory instead.")
+        logger.warning(f"The directory specified by the {CUSTOM_PATH_ENV_VAR} environment variable does not exist, using the default {default} directory instead.")
         return default
 
     @staticmethod

@@ -5,6 +5,7 @@ from typing import Any, Self
 
 from blasmodcli.exceptions import CommandInMultipleGroupsError
 from blasmodcli.model import Game
+from blasmodcli.utils.message import logger
 from blasmodcli.utils.cli.argument import Argument
 from blasmodcli.utils.cli.choices import Choices
 from blasmodcli.utils.cli.context import CommandContext
@@ -79,6 +80,7 @@ class MetaCommandHandler(ABCMeta):
             arg.add_arguments_to(subparser)
 
     def call_handler(cls, context: CommandContext, game: Game, namespace: Namespace) -> int:
+        logger.info(f"Calling handler '{cls}' on game '{game.id}'.")
         instance = cls(context, game, namespace)
         return asyncio.run(instance.proper_handle())
 

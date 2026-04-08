@@ -5,7 +5,7 @@ from blasmodcli.exceptions import NothingToDoException, UserCancelException
 from blasmodcli.model import Game
 from blasmodcli.utils.cli.context import CommandContext
 from blasmodcli.utils.cli.meta_handler import MetaCommandHandler
-from blasmodcli.utils.message import Message
+from blasmodcli.utils.message import Message, logger
 
 
 class CommandHandler(ABC, metaclass=MetaCommandHandler):
@@ -55,8 +55,8 @@ class CommandHandler(ABC, metaclass=MetaCommandHandler):
             Message.success(str(e))
             return 0
         except UserCancelException as e:
-            Message.error(str(e))
+            logger.error(str(e))
             return 0
         except Exception as e:
-            Message.error(f"{e.__class__.__name__}: {e}")
+            logger.error(f"{e.__class__.__name__}: {e}")
             raise e
