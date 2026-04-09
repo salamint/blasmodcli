@@ -21,6 +21,9 @@ cover basic use cases, to automate the process of installing and managing mods.
 3. [Commands](#commands)
 4. [Paths](#paths)
 
+> [!NOTE]
+> Has not been tested on the Steam Deck yet.
+
 ## Installation
 
 Simply run inside a terminal:
