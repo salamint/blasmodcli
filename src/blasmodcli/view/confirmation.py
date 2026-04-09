@@ -1,10 +1,10 @@
 from blasmodcli.exceptions import UserCancelException
 from blasmodcli.utils import Color
-from blasmodcli.utils.message import Message
+from blasmodcli.utils.message import ArrowStyle, Message
 
 
 def confirmation(message: str, default: bool = True):
-    Message.print(Color.YELLOW, message, nl=False)
+    Message.print(ArrowStyle.THICK, Color.YELLOW, message, nl=False)
     if default:
         string = "Y/n"
     else:
