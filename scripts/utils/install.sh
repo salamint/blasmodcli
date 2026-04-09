@@ -17,6 +17,13 @@ echo "=> Installing the python package locally..."
 . "$VENV_DIR/bin/activate"
 pip install "$TEMP_LOCATION"
 
+CONFIG_DIR="$HOME/.config/blasmodcli"
+echo "=> Copying the default configuration..."
+mkdir -p "$CONFIG_DIR"
+cp "$TEMP_LOCATION/docs/config/general.toml" "$CONFIG_DIR"
+cp -r "$TEMP_LOCATION/docs/config/games" "$CONFIG_DIR"
+cp -r "$TEMP_LOCATION/docs/config/sources" "$CONFIG_DIR"
+
 echo "=> Cleaning up installation..."
 mv "$TEMP_LOCATION/scripts" "$PROGRAM_DIR"
 rm -rf "$TEMP_LOCATION"
