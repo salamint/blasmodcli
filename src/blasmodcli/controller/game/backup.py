@@ -21,10 +21,10 @@ class Backup(GameCommandGroup):
             return self.destination.with_suffix("")
         return self.destination
 
-    def handle(self) -> int:
+    async def handle(self) -> int:
         Message.info("Backing up saves data...")
         destination = self.get_final_destination()
 
-        make_archive(str(self.destination), "zip", self.game.saves_directory)
+        make_archive(str(self.destination), "zip", self.game.saves_directory.expanduser().resolve())
         Message.success(f"Saves data backed up at '{destination}'!")
         return 0
