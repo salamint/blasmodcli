@@ -111,6 +111,10 @@ blasmodcli launch
 but this will just start the game using Steam's protocol, so it will only start the game modded if you followed the step
 above.
 
+### Add support to more games and sources
+
+See the dedicated [documentation](docs/config.md) on how to creation configuration files to add new games and sources.
+
 ## Commands
 
 > [!NOTE]
