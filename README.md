@@ -22,7 +22,8 @@ cover basic use cases, to automate the process of installing and managing mods.
 4. [Paths](#paths)
 
 > [!NOTE]
-> Has not been tested on the Steam Deck yet.
+> Works on the Steam Deck!
+> Has been tested by 1 person.
 
 ## Installation
 
