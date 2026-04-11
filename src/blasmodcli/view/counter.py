@@ -1,5 +1,5 @@
 from blasmodcli.utils import Color
-from blasmodcli.utils.message import Message
+from blasmodcli.utils.message import Message, ArrowStyle
 
 
 class Counter:
@@ -22,6 +22,6 @@ class Counter:
     def print(self):
         color = Color.GREEN if self.finished else Color.YELLOW
         print(end="\r")
-        Message.print(color, f"{self.message}... {color.fmt(self)}", nl=False)
+        Message.print(ArrowStyle.THICK, color, f"{self.message}... {color.fmt(self)}", nl=False)
         if self.finished:
             print(flush=True)
