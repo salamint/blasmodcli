@@ -25,6 +25,6 @@ class Backup(GameCommandGroup):
         Message.info("Backing up saves data...")
         destination = self.get_final_destination()
 
-        make_archive(str(self.destination), "zip", self.game.saves_directory.expanduser().resolve())
+        make_archive(str(destination), "zip", self.game.saves_directory.expanduser().resolve())
         Message.success(f"Saves data backed up at '{destination}'!")
         return 0
