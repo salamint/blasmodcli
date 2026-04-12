@@ -4,7 +4,7 @@ from datetime import datetime
 from aiohttp import ClientSession
 from typing import Generator
 
-from blasmodcli.exceptions.parsing import NameConversionError
+from blasmodcli.exceptions.utils import NameConversionError
 from blasmodcli.model import Authorship, Mod, Source, Version
 from blasmodcli.utils.parsing.parser import ModListParser, Object
 from blasmodcli.view import DateFormat
