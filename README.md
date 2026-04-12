@@ -22,7 +22,8 @@ cover basic use cases, to automate the process of installing and managing mods.
 4. [Paths](#paths)
 
 > [!NOTE]
-> Has not been tested on the Steam Deck yet.
+> Works on the Steam Deck!
+> Has been tested by 1 person.
 
 ## Installation
 
@@ -109,6 +110,10 @@ blasmodcli launch
 ```
 but this will just start the game using Steam's protocol, so it will only start the game modded if you followed the step
 above.
+
+### Add support to more games and sources
+
+See the dedicated [documentation](docs/config.md) on how to creation configuration files to add new games and sources.
 
 ## Commands
 
