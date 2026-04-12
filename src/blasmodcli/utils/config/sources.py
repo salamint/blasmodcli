@@ -15,12 +15,13 @@ class SourceConfiguration(ConfigurationDirectory[Source]):
         sources = []
         for source_name, games in data.items():
             for game_id, attrs in games.items():
+                section = f"{source_name}.{game_id}"
                 source = Source(
                     game_id=game_id,
                     name=source_name,
-                    format=attrs["format"],
-                    url=attrs["url"],
-                    maintainer=attrs["maintainer"],
+                    format=self.get(attrs, section, "format", str),
+                    url=self.get(attrs, section, "url", str),
+                    maintainer=self.get(attrs, section, "maintainer", str),
                 )
                 sources.append(source)
         return sources
