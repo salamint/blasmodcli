@@ -2,4 +2,3 @@ from .argument import ArgumentValueError, ModNameError, UnknownModError, Multipl
 from .backend import CriticalBackendException, CommandInMultipleGroupsError
 from .base import ApplicationException
 from .controller import ControllerException, NothingToDoException, UserCancelException
-from .resolver import DependencyResolutionException, UnresolvableDependency
