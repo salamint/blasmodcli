@@ -15,13 +15,35 @@ class GameConfiguration(ConfigurationDirectory[Game]):
     def load_data(self, data: dict) -> list[Game]:
         games = []
         for key, attrs in data.items():
-            tools_attrs = attrs.pop("tools")
-            tools_dependencies = tools_attrs.pop("dependencies", {})
-            tools = ModdingTools(**tools_attrs)
-            for name, display_name in tools_dependencies.items():
-                ModdingToolsDependency(modding_tools=tools, name=name, display_name=display_name)
-            game = Game(id=key, **attrs, modding_tools=tools)
+            modding_tools = self.load_modding_tools(attrs["tools"])
+            game = Game(
+                id=key,
+                title=attrs["title"],
+                steamapp_id=attrs["steamapp_id"],
+                developer=attrs["developer"],
+                publisher=attrs["publisher"],
+                linux_native=attrs["linux_native"],
+                saves_directory=attrs["saves_directory"],
+                modding_tools=modding_tools
+            )
             game = self.repository.update(game)
             self.games[key] = game
             games.append(game)
         return games
+
+    def load_modding_tools(self, data: dict) -> ModdingTools:
+        modding_tools = ModdingTools(
+            mod_loader=data["mod_loader"],
+            format=data["format"],
+            url=data["url"],
+            author=data["author"],
+            script_filename=data.get("script_filename"),
+        )
+        dependencies = data.pop("dependencies", {})
+        for name, display_name in dependencies.items():
+            ModdingToolsDependency(
+                modding_tools=modding_tools,
+                name=name,
+                display_name=display_name
+            )
+        return modding_tools
