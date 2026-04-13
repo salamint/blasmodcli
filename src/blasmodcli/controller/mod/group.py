@@ -3,7 +3,8 @@ from abc import ABC
 
 from sqlalchemy.exc import NoResultFound
 
-from blasmodcli.exceptions import UnknownModError, MultipleModsError, UnresolvableDependency
+from blasmodcli.exceptions import UnknownModError, MultipleModsError
+from blasmodcli.exceptions.utils import UnresolvableDependency
 from blasmodcli.model import Version
 from blasmodcli.model.mod import Mod
 from blasmodcli.utils import Message, logger
