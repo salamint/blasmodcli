@@ -1,4 +1,4 @@
-from blasmodcli.exceptions.resolver import UnresolvableDependency
+from blasmodcli.exceptions.utils import UnresolvableDependency
 from blasmodcli.model import Mod, ModVersion, Version, Dependency
 
 
