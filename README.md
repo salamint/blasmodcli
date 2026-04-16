@@ -1,9 +1,10 @@
 # blasmodcli
 
 This is a command line interface to help manage mods
-for [Blasphemous](https://store.steampowered.com/app/774361/Blasphemous/) and [Blasphemous II]() on Linux. There is
-already a mod installer, but at the time being it is only available for Windows. In the meantime, this script should
-cover basic use cases, to automate the process of installing and managing mods.
+for [Blasphemous](https://store.steampowered.com/app/774361/Blasphemous/) and
+[Blasphemous II](https://store.steampowered.com/app/2114740/Blasphemous_2/) on Linux.
+There is already a mod installer, but at the time being it is only available for Windows.
+In the meantime, this script should cover basic use cases, to automate the process of installing and managing mods.
 
 > [!WARNING]
 > Keep in mind that at the moment this installer does not account for configuration files, so make sure to back any important configuration before continuing.
