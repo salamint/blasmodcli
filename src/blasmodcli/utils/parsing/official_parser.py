@@ -6,6 +6,7 @@ from typing import Generator
 
 from blasmodcli.exceptions.utils import NameConversionError
 from blasmodcli.model import Authorship, Mod, Source, Version
+from blasmodcli.utils import logger
 from blasmodcli.utils.parsing.parser import ModListParser, Object
 from blasmodcli.view import DateFormat
 
@@ -14,13 +15,15 @@ AUTHORS_SEPARATOR = " && "
 
 async def fetch_latest_version(session: ClientSession, repository: str) -> Version:
     url = f"{repository}/releases/latest"
+    logger.debug(f"Fetching mod URL {url}...")
     async with session.get(url) as response:
         response.raise_for_status()
         version_string = response.url.parts[-1]
+        logger.debug(f"Mod URL {url} returned {response.url}")
         return Version.from_tag(version_string)
 
 
-def parse_authors(string: str) -> Generator[str]:
+def parse_authors(string: str) -> 'Generator[str, None, None]':
     with_separators = string.replace(", && ", AUTHORS_SEPARATOR).replace(", ", AUTHORS_SEPARATOR)
     for name in with_separators.split(AUTHORS_SEPARATOR):
         yield name.strip()
@@ -60,7 +63,7 @@ class OfficialModListParser(ModListParser):
         self.all_data = data
         self.total = len(self.all_data)
 
-    def data(self) -> Generator[Object]:
+    def data(self) -> 'Generator[Object, None, None]':
         for i, data in enumerate(self.all_data):
             if not isinstance(data, dict):
                 raise TypeError(f"The value at index {i} is of type {type(data)} and not an object.")

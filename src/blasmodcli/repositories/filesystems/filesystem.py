@@ -28,7 +28,7 @@ class FileSystemRepository(IRepository[Path]):
             files.append(entry)
         return files
 
-    def get_all_entries(self) -> Generator[Entry]:
+    def get_all_entries(self) -> 'Generator[Entry, None, None]':
         for file in self.get_all():
             entry = self.entry(file)
             if entry is not None:
@@ -57,7 +57,7 @@ class FileSystemRepository(IRepository[Path]):
             versions.append(entry.version)
         return versions
 
-    def get_entries_for(self, mod: Mod, version: Version | None = None) -> Generator[Entry]:
+    def get_entries_for(self, mod: Mod, version: Version | None = None) -> 'Generator[Entry, None, None]':
         for file in self.get_files_for(mod, version):
             entry = self.entry(file)
             if entry is not None:
@@ -69,7 +69,7 @@ class FileSystemRepository(IRepository[Path]):
             return None
         return self.entry(file)
 
-    def get_files_for(self, mod: Mod, version: Version | None = None) -> Generator[Path]:
+    def get_files_for(self, mod: Mod, version: Version | None = None) -> 'Generator[Path, None, None]':
         for file in self.directory.glob(self.filename(mod, version)):
             if file.is_file():
                 yield file
