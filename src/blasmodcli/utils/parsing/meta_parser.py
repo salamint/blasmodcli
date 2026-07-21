@@ -1,10 +1,10 @@
 from abc import ABCMeta
-from typing import Any, Self
+from typing import Any
 
 
 class MetaModListParser(ABCMeta):
 
-    _parsers: dict[str, Self] = {}
+    _parsers: dict[str, 'MetaModListParser'] = {}
 
     def __new__(cls, name: str, bases: tuple[type], dct: dict[str, Any]):
         instance = super().__new__(cls, name, bases, dct)
