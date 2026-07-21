@@ -1,6 +1,6 @@
 [project]
 name = "blasmodcli"
-version = "1.0.0"
+version = "1.0.1"
 authors = [ { name = "salamint", email = "salamint@proton.me" } ]
 description = "A tool to simplify the installation and management of mods for Blasphemous and Blasphemous II on Linux."
 readme = "README.md"
@@ -17,8 +17,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://gitlab.com/salamint/blasmodcli"
-Issues = "https://gitlab.com/salamint/blasmodcli/-/issues"
+Homepage = "https://github.com/salamint/blasmodcli"
+Issues = "https://github.com/salamint/blasmodcli/issues"
 
 [build-system]
 requires = [ "setuptools" ]
