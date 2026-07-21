@@ -21,7 +21,7 @@ class ModListParser(ABC, metaclass=MetaModListParser):
             mods.append(mod)
 
     @abstractmethod
-    def data(self) -> Generator[Object]:
+    def data(self) -> 'Generator[Object, None, None]':
         pass
 
     @abstractmethod

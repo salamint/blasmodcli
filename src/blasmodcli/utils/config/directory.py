@@ -26,7 +26,7 @@ class ConfigurationDirectory(ABC, Generic[T]):
         except KeyError:
             raise MissingFieldException(self.current_file, section_name, field_name)
 
-    def files(self) -> Generator[Path]:
+    def files(self) -> 'Generator[Path, None, None]':
         for entry in self.directory.rglob("*.toml"):
             if entry.is_file():
                 yield entry
